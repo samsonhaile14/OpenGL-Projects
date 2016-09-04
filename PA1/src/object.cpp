@@ -87,12 +87,13 @@ void Object::Update(unsigned int dt)
 
   angle += dt  * M_PI/1000;
   
-  distX = 5.0 * glm::cos(angle);// - distX;
+  distX = 5.0 * glm::cos(angle*2);
 
-  distZ = 5.0 * glm::sin(angle);// - distZ;
-
-  model = glm::translate(glm::vec3(distX,0.0,distZ));
-  //model = glm::rotate( (angle), glm::vec3(0.0, 1.0, 0.0));
+  distZ = 5.0 * glm::sin(angle*2);
+   
+  model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
+  model = glm::rotate( model, (angle), glm::vec3(0.0, 1.0, 0.0));
+  model = glm::translate(model, glm::vec3(distX,0.0,distZ));
 }
 
 glm::mat4 Object::GetModel()
