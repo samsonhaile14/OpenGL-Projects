@@ -1,4 +1,0 @@
-/home/samson/Documents/Programming/CS680/computer-graphics/PA1/CMakeFiles/edit_cache.dir
-/home/samson/Documents/Programming/CS680/computer-graphics/PA1/CMakeFiles/Tutorial_SUCCESSFUL.dir
-/home/samson/Documents/Programming/CS680/computer-graphics/PA1/CMakeFiles/rebuild_cache.dir
-/home/samson/Documents/Programming/CS680/computer-graphics/PA1/CMakeFiles/Tutorial.dir
