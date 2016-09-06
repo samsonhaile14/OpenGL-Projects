@@ -1,4 +1,6 @@
 #include "shader.h"
+#include <fstream>
+#include <iostream>
 
 Shader::Shader()
 {
@@ -39,7 +41,9 @@ bool Shader::AddShader(GLenum ShaderType)
 
   if(ShaderType == GL_VERTEX_SHADER)
   {
-    s = "#version 330\n \
+loadShader("vertex.glsl", s);
+std::cout << s << std::endl;
+/*    s = "#version 330\n \
           \
           layout (location = 0) in vec3 v_position; \
           layout (location = 1) in vec3 v_color; \
@@ -56,11 +60,13 @@ bool Shader::AddShader(GLenum ShaderType)
             gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v; \
             color = v_color; \
           } \
-          ";
+          ";*/
   }
   else if(ShaderType == GL_FRAGMENT_SHADER)
   {
-    s = "#version 330\n \
+
+loadShader("fragment.glsl",s);
+/*    s = "#version 330\n \
           \
           smooth in vec3 color; \
           \
@@ -70,7 +76,7 @@ bool Shader::AddShader(GLenum ShaderType)
           { \
              frag_color = vec4(color.rgb, 1.0); \
           } \
-          ";
+          ";*/
   }
 
   GLuint ShaderObj = glCreateShader(ShaderType);
@@ -163,3 +169,25 @@ GLint Shader::GetUniformLocation(const char* pUniformName)
 
     return Location;
 }
+
+void Shader::loadShader(std::string fName, std::string &content)
+{
+
+content = "";
+const std::string filePath = "../shaders/";
+std::ifstream fAccess(filePath + fName, std::fstream::in);
+
+if( fAccess.fail() ){
+std::cout << "fail" << std::endl;
+      return;
+
+}
+
+content.assign(std::istreambuf_iterator<char>(fAccess), 
+             std::istreambuf_iterator<char>() );
+
+fAccess.close();
+
+}
+
+
