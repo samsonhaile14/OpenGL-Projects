@@ -39,44 +39,16 @@ bool Shader::AddShader(GLenum ShaderType)
 {
   std::string s;
 
+  //Loads the vertex shader from file into string s
   if(ShaderType == GL_VERTEX_SHADER)
   {
-loadShader("vertex.glsl", s);
-std::cout << s << std::endl;
-/*    s = "#version 330\n \
-          \
-          layout (location = 0) in vec3 v_position; \
-          layout (location = 1) in vec3 v_color; \
-          \
-          smooth out vec3 color; \
-          \
-          uniform mat4 projectionMatrix; \
-          uniform mat4 viewMatrix; \
-          uniform mat4 modelMatrix; \
-          \
-          void main(void) \
-          { \
-            vec4 v = vec4(v_position, 1.0); \
-            gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * v; \
-            color = v_color; \
-          } \
-          ";*/
+   loadShader("vertex.glsl", s);
   }
+
+  //Loads the fragment shader from file into string s
   else if(ShaderType == GL_FRAGMENT_SHADER)
   {
-
-loadShader("fragment.glsl",s);
-/*    s = "#version 330\n \
-          \
-          smooth in vec3 color; \
-          \
-          out vec4 frag_color; \
-          \
-          void main(void) \
-          { \
-             frag_color = vec4(color.rgb, 1.0); \
-          } \
-          ";*/
+   loadShader("fragment.glsl",s);
   }
 
   GLuint ShaderObj = glCreateShader(ShaderType);
@@ -173,19 +145,24 @@ GLint Shader::GetUniformLocation(const char* pUniformName)
 void Shader::loadShader(std::string fName, std::string &content)
 {
 
-content = "";
+//variables and initialization
+content = ""; //content stays empty if file read fails
 const std::string filePath = "../shaders/";
+
+//open file
 std::ifstream fAccess(filePath + fName, std::fstream::in);
 
+//If file does not exist or access fails, leave content empty
 if( fAccess.fail() ){
-std::cout << "fail" << std::endl;
+std::cout << "fail, passing empty file" << std::endl;
       return;
-
 }
 
+//read the entire file into the string
 content.assign(std::istreambuf_iterator<char>(fAccess), 
-             std::istreambuf_iterator<char>() );
+               std::istreambuf_iterator<char>() );
 
+//close the file stream
 fAccess.close();
 
 }

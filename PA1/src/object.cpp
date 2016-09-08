@@ -62,9 +62,6 @@ Object::Object()
 
   angle = 0.0f;
 
-  distX = 0.0f;
-  distZ = 0.0f;
-
   glGenBuffers(1, &VB);
   glBindBuffer(GL_ARRAY_BUFFER, VB);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
@@ -84,15 +81,20 @@ Object::~Object()
 void Object::Update(unsigned int dt)
 {
   
-
   angle += dt  * M_PI/1000;
   
-  distX = 5.0 * glm::cos(angle*2);
+  //specified variables distX and distZ to specify translation of cube in orbit
+  float distX = 5.0 * glm::cos(angle*2);
 
-  distZ = 5.0 * glm::sin(angle*2);
+  float distZ = 5.0 * glm::sin(angle*2);
    
+  //return cube back to origin
   model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
+
+
   model = glm::rotate( model, (angle), glm::vec3(0.0, 1.0, 0.0));
+
+  //move cube to location specified distX and distZ
   model = glm::translate(model, glm::vec3(distX,0.0,distZ));
 }
 

@@ -22,7 +22,6 @@ class Object
     GLuint IB;
 
     float angle;
-    float distX, distZ;
 };
 
 #endif /* OBJECT_H */
