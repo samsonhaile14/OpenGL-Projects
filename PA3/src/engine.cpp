@@ -98,7 +98,9 @@ void Engine::Keyboard()
     }
 
     // Handle key event for reversing orbit
-    else if (m_event.key.keysym.sym == SDLK_o)
+    else if (m_event.key.keysym.sym == SDLK_o ||
+             (m_event.key.keysym.sym == SDLK_LEFT && movement[1] > 0) ||
+             (m_event.key.keysym.sym == SDLK_RIGHT && movement[1] < 0))
     {
       movement[1] *= -1.0;
     }
