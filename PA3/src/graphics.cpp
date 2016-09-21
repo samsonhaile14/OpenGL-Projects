@@ -116,11 +116,11 @@ void Graphics::Update(unsigned int dt, float movement[], bool pause)
 
   float constantMove[2] = {1.0f,1.0f};
 
-  if(movement[ 1 ] == 1){
+  if(movement[ 0 ] == -1){
      clockwise = true;
   }
 
-  else if(movement[ 1 ] == -1){
+  else if(movement[ 0 ] == 1){
      clockwise = false;
   }
 
