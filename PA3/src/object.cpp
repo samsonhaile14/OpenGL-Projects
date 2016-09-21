@@ -1,5 +1,4 @@
 #include "object.h"
-#include <stdio.h>
 
 Object::Object(float oRadius, float oSpeed)
 {  
@@ -55,6 +54,70 @@ Object::Object(float oRadius, float oSpeed)
     5, 1, 8
   };
 
+init(oRadius, oSpeed);
+}
+
+Object::Object(float oRadius, float oSpeed, std::string objPath)
+{
+
+//variables and initialization
+int indx;
+float x,y,z;
+unsigned int val;
+std::string start;
+
+//open file
+std::ifstream fAccess(objPath, std::fstream::in);
+
+//If file does not exist or access fails, leave content empty
+if( fAccess.fail() ){
+std::cout << "fail, passing empty object" << std::endl;
+      return;
+}
+
+
+//read object attributes
+   //ignore first four lines
+   for( indx = 0; indx < 4; indx++){
+      fAccess.ignore(100, '\n');
+   }
+
+   //read vertices
+   fAccess >> start;
+
+   while(start == "v" || start == "vn"){
+      fAccess >> x >> y >> z; 
+      Vertices.push_back({{x, y, z}, {0.0f, 0.0f, 0.0f}});
+      fAccess >> start;
+   }
+
+   //read faces
+   for( indx = 0; indx < 2; indx++){
+      fAccess.ignore(100, '\n');
+   }
+
+   while(fAccess.good()){
+      fAccess >> start;
+
+      for( indx = 0; indx < 3; indx++ ){
+         fAccess >> val; 
+
+         Indices.push_back(val);
+         fAccess >> start;
+      }
+   }
+
+//close the file stream
+fAccess.close();
+
+init(oRadius, oSpeed);
+
+}
+
+
+void Object::init( float oRadius, float oSpeed )
+{
+
   // The index works at a 0th index
   for(unsigned int i = 0; i < Indices.size(); i++)
   {
@@ -74,7 +137,9 @@ Object::Object(float oRadius, float oSpeed)
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
 
+
 }
+
 
 Object::~Object()
 {

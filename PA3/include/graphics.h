@@ -30,6 +30,10 @@ class Graphics
 
     Object *m_cube;
     Object *m_moon;
+    Object *m_FText;
+    Object *m_RText;
+
+    bool clockwise = true;
 };
 
 #endif /* GRAPHICS_H */

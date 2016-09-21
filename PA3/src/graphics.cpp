@@ -45,8 +45,11 @@ bool Graphics::Initialize(int width, int height)
   }
 
   // Create the object
-  m_cube = new Object(5.0f, 8.0f);
+  m_cube = new Object(6.5f, 8.0f);
   m_moon = new Object(3.0f, 20.0f);
+
+  m_FText = new Object(0.0f, 0.0f, "../objects/ClockwiseText.obj");
+  m_RText = new Object(0.0f, 0.0f, "../objects/CounterclockwiseText.obj");
 
   // Set up the shaders
   m_shader = new Shader();
@@ -113,9 +116,18 @@ void Graphics::Update(unsigned int dt, float movement[], bool pause)
 
   float constantMove[2] = {1.0f,1.0f};
 
+  if(movement[ 1 ] == 1){
+     clockwise = true;
+  }
+
+  else if(movement[ 1 ] == -1){
+     clockwise = false;
+  }
+
   // Update the object
   m_cube->Update(dt, movement, pause);
   m_moon->Update(dt, constantMove, pause);
+
 }
 
 void Graphics::Render()
@@ -131,14 +143,23 @@ void Graphics::Render()
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
 
-  // Render the object
+  // Render the objects
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_cube->GetModel()));
   m_cube->Render();
   
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, 
                      glm::value_ptr((m_cube->GetModel()) * (m_moon->GetModel())));
-  m_moon->Render();
-                   
+  m_moon->Render();                     
+
+  if(clockwise){
+     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_FText->GetModel()));
+     m_FText->Render();  
+  }
+
+  else{
+     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_RText->GetModel()));
+     m_RText->Render();                   
+  }
 
   // Get any errors from OpenGL
   auto error = glGetError();

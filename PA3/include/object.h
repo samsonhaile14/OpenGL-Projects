@@ -2,12 +2,17 @@
 #define OBJECT_H
 
 #include <vector>
+#include <string>
+#include <stdio.h>
+#include <fstream>
 #include "graphics_headers.h"
 
 class Object
 {
   public:
     Object(float oRadius, float oSpeed);
+    Object(float oRadius, float oSpeed, std::string objPath);
+    void init( float oRadius, float oSpeed );
     ~Object();
     void Update(unsigned int dt, float movement[], bool pause);
     void Render();
