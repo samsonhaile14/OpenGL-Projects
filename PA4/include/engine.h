@@ -10,7 +10,8 @@
 class Engine
 {
   public:
-    Engine(string name, int width, int height);
+    Engine(string name, int width, int height, 
+           std::vector< std::string > fileNames );
     Engine(string name);
     ~Engine();
     bool Initialize();
@@ -26,6 +27,7 @@ class Engine
     int m_WINDOW_WIDTH;
     int m_WINDOW_HEIGHT;
     bool m_FULLSCREEN;
+    std::vector< std::string > gFiles;
     SDL_Event m_event;
 
     Graphics *m_graphics;

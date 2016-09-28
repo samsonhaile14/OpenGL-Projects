@@ -71,7 +71,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath )
 int indx;
 float x,y,z;
 unsigned int val;
-std::vector<glm::vec3> colorList(1, {0,0,0});
+std::vector<glm::vec3> colorList(1, {1,1,1});
 std::vector<std::string> colorName(1, "None");
 
 //read obj file
@@ -255,7 +255,7 @@ long long int indx, mtlIndx;
                   else{
                      val = assignedIndx[val];
                   }
-   std::cout << val << ' ';
+
                   Indices.push_back(val);
 
                   //pickup extraneous characters after index
@@ -266,7 +266,7 @@ long long int indx, mtlIndx;
 
             //read start of next line
             fAccess >> start;
-   std::cout << start << std::endl;
+
             }
 
       }

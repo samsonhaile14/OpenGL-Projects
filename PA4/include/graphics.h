@@ -12,7 +12,7 @@ using namespace std;
 class Graphics
 {
   public:
-    Graphics();
+    Graphics(std::vector< std::string > graphicFiles);
     ~Graphics();
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[], bool pause);
@@ -20,6 +20,8 @@ class Graphics
 
   private:
     std::string ErrorString(GLenum error);
+   
+    std::vector< std::string > oFiles;
 
     Camera *m_camera;
     Shader *m_shader;

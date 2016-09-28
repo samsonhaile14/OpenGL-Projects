@@ -1,7 +1,9 @@
 #include "graphics.h"
 
-Graphics::Graphics()
+Graphics::Graphics(std::vector< std::string > graphicFiles )
 {
+
+oFiles = graphicFiles;
 
 }
 
@@ -45,7 +47,18 @@ bool Graphics::Initialize(int width, int height)
   }
 
   // Create the object
-  m_BObj = new Object(0.0f, 1.0f, "../objects/box.obj", "../objects/box.mtl" );
+  
+  if( oFiles.size() == 0 ){
+   m_BObj = new Object(0.0f, 0.0f, "../objects/box.obj", "../objects/box.mtl" );
+  }
+
+  else if( oFiles.size() == 1 ){
+   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0]);
+  }
+
+  else{
+   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0], "../objects/" + oFiles[1] );
+  }
 
   // Set up the shaders
   m_shader = new Shader();
