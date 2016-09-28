@@ -10,8 +10,8 @@ Follow the following instructions to compile and run the code:
 Instructions for executing
 The program accepts command line arguments that specify an obj and/or mtl file.  
 The format of the execution of the program follows:  
-./Tutorial <obj file name> <mtl file name>, where <obj file name> and  
-<mtl file name> each specify a file of the respective type. For example,  
+./Tutorial (obj file name) (mtl file name), where (obj file name) and  
+(mtl file name) each specify a file of the respective type. For example,  
 ./Tutorial box.obj and box.mtl will display a box object in accordance with  
 the specified obj and mtl file.    
 
