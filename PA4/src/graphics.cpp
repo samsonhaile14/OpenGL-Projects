@@ -45,7 +45,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   // Create the object
-  m_BObj = new Object(0.0f, 0.0f, "../objects/dragon.obj", "../objects/dragon.mtl" );
+  m_BObj = new Object(0.0f, 1.0f, "../objects/box.obj", "../objects/box.mtl" );
 
   // Set up the shaders
   m_shader = new Shader();
@@ -110,6 +110,7 @@ bool Graphics::Initialize(int width, int height)
 void Graphics::Update(unsigned int dt, float movement[], bool pause)
 {
 
+m_BObj->Update( dt, movement, pause);
 
 }
 

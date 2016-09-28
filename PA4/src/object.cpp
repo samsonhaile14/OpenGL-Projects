@@ -287,9 +287,34 @@ Object::~Object()
 void Object::Update(unsigned int dt, float movement[], bool pause)
 {
   
+  //module for orbit and rotation response to controls
+  if( !pause ){
+    if( glm::abs(movement[0]) < 2.0f )
+    {
+      rotAngle += dt * (M_PI/1000) * movement[0];
+    }
+
+    if( glm::abs(movement[1]) < 2.0f )
+    {
+      orbitAngle += dt * (M_PI/10000) * movement[1] * orbitSpeed;  
+    }
+  }
+
+  //specified variables distX and distZ to specify translation of cube in orbit
+  float distX = orbitRadius * glm::cos(orbitAngle);
+
+  float distZ = orbitRadius * glm::sin(orbitAngle);
+   
+  //return cube back to origin
+  model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
+
+  //move cube to location specified distX and distZ
+  model = glm::translate(model, glm::vec3(distX,0.0,distZ));
+
+  //rotate cube
+  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
 
 }
-
 glm::mat4 Object::GetModel()
 {
   return model;
