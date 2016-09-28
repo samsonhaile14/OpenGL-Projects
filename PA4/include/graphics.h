@@ -28,9 +28,7 @@ class Graphics
     GLint m_viewMatrix;
     GLint m_modelMatrix;
 
-    Object *m_cube;
-    Object *m_moon;
-    Object *m_FText;
+    Object *m_BObj;
 
 
     bool clockwise = true;

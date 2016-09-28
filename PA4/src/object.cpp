@@ -130,7 +130,6 @@ std::cout << "fail, passing empty object" << std::endl;
       fAccess >> rCol >> gCol >> bCol;
 
       colorList.push_back( {rCol,gCol,bCol} );
-      std::cout << colorList[indx][0] << ' ' << colorList[indx][1] << ' ' << colorList[indx][2] << ' ' << std::endl;
 
       //ignore till next material or end of file
       fAccess.ignore(999, 'n');
@@ -189,81 +188,90 @@ long long int indx, mtlIndx;
 
 
 //read object attributes
-   //ignore first four lines
-   for( indx = 0; indx < 4; indx++){
-      fAccess.ignore(100, '\n');
-   }
+   //skip to vertex input
+      fAccess >> start;
+      while(start != "v"){
+         fAccess >> start;
+      }
 
    //read vertices
-   fAccess >> start;
-
-   while(start == "v" || start == "vn"){
-      fAccess >> xPos >> yPos >> zPos; 
-      Vertices.push_back({{xPos, yPos, zPos}, {0.0f, 0.0f, 0.0f}});
-      fAccess >> start;
-   }
-
-   std::vector< bool > colorSet(Vertices.size(),false);
+      while(start == "v" || start == "vn"){
+         fAccess >> xPos >> yPos >> zPos;
+         Vertices.push_back({{xPos, yPos, zPos}, {0.0f, 0.0f, 0.0f}});
+         fAccess >> start;
+      }
 
    //collect faces of each material type
-   while(fAccess.good() && start == "usemtl"){
-      //vector for vertex-color tracking
-         std::vector< long long int > assignedIndx(colorSet.size(), -1);
+      std::vector< bool > colorSet(Vertices.size(),false); //checks if color of vertex is assigned
 
-      //determine material used for faces
-         fAccess >> mtlName;
-
-         mtlIndx = 0;
-         while( colorNames[mtlIndx] != mtlName ){
-            mtlIndx++;
-
-            if( mtlIndx >= colorList.size() ){
-               mtlIndx = 0;
-               mtlName = colorNames[mtlIndx];
-            } 
-         }
-
-
-      //skip to face input
-         fAccess >> start;
-         while(start != "f"){
+      //move file pointer to material name token
+         while(start != "usemtl" && fAccess.good()){
             fAccess >> start;
          }
 
-      //read faces of selected material
-         while(fAccess.good() && start == "f"){
+      while(fAccess.good() && start == "usemtl"){
+         //vector for vertex-color tracking
+            std::vector< long long int > assignedIndx(colorSet.size(), -1);
 
-            for( indx = 0; indx < 3; indx++ ){
-               fAccess >> val; 
-               val-=1;
+         //determine material used for faces
+            fAccess >> mtlName;
 
-               if( !colorSet[val] ){
-                  colorSet[val] = true;
-                  Vertices[val].color = colorList[mtlIndx];
-                  assignedIndx[val] = val;
-               }
+            mtlIndx = 0;
+            while( colorNames[mtlIndx] != mtlName ){
+               mtlIndx++;
 
-               else if(assignedIndx[val] == -1){
-                  assignedIndx[val] = Vertices.size();
-                  Vertices.push_back( {Vertices[val].vertex, colorList[mtlIndx]} );
-                  val = assignedIndx[val];
-               }
+               if( mtlIndx >= colorList.size() ){
+                  mtlIndx = 0;
+                  mtlName = colorNames[mtlIndx];
+               } 
+            }
 
-               else{
-                  val = assignedIndx[val];
-               }
 
-               Indices.push_back(val);
-
+         //skip to face input
+            fAccess >> start;
+            while(start != "f"){
                fAccess >> start;
             }
 
-         //read start of next line
-         fAccess >> start;
+         //read faces of selected material
+            while(fAccess.good() && start == "f"){
 
-         }
+               for( indx = 0; indx < 3; indx++ ){
+                  fAccess >> val; 
+                  val-=1;
 
-   }
+                  if( !colorSet[val] ){
+                     colorSet[val] = true;
+                     Vertices[val].color = colorList[mtlIndx];
+                     assignedIndx[val] = val;
+                  }
+
+                  else if(assignedIndx[val] == -1){
+                     assignedIndx[val] = Vertices.size();
+                     Vertices.push_back( {Vertices[val].vertex, colorList[mtlIndx]} );
+                     val = assignedIndx[val];
+                  }
+
+                  else{
+                     val = assignedIndx[val];
+                  }
+   std::cout << val << ' ';
+                  Indices.push_back(val);
+
+                  //pickup extraneous characters after index
+                  if( fAccess.peek() != ' ' ){
+                     fAccess >> start;
+                  }
+               }
+
+            //read start of next line
+            fAccess >> start;
+   std::cout << start << std::endl;
+            }
+
+      }
+
+   fAccess.close();
 
    return 1;
 
@@ -279,32 +287,6 @@ Object::~Object()
 void Object::Update(unsigned int dt, float movement[], bool pause)
 {
   
-  //module for orbit and rotation response to controls
-  if( !pause ){
-    if( glm::abs(movement[0]) < 2.0f )
-    {
-      rotAngle += dt * (M_PI/1000) * movement[0];
-    }
-
-    if( glm::abs(movement[1]) < 2.0f )
-    {
-      orbitAngle += dt * (M_PI/10000) * movement[1] * orbitSpeed;  
-    }
-  }
-
-  //specified variables distX and distZ to specify translation of cube in orbit
-  float distX = orbitRadius * glm::cos(orbitAngle);
-
-  float distZ = orbitRadius * glm::sin(orbitAngle);
-   
-  //return cube back to origin
-  model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
-
-  //move cube to location specified distX and distZ
-  model = glm::translate(model, glm::vec3(distX,0.0,distZ));
-
-  //rotate cube
-  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
 
 }
 
