@@ -107,7 +107,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
       });
     }
 
-  totalMeshVerts += Vertices.size();
+  totalMeshVerts = Vertices.size();
   }
 
   init(oRadius, oSpeed);
