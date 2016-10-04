@@ -94,7 +94,7 @@ for( int i = 0; i < object->mNumMeshes; ++i ){
     printf("\r\n");
   }
   printf("\r\n");
-
+/*
   // read vertex values
   printf("Num Vertices in Mesh %d: %d\r\n", i, mesh->mNumVertices);
   for( int j = 0; j < mesh->mNumVertices; ++j ){
@@ -102,7 +102,7 @@ for( int i = 0; i < object->mNumMeshes; ++i ){
       printf("%f, %f, %f\r\n", vertex.x, vertex.y, vertex.z);
   }
   printf("\r\n");
- 
+*/ 
 }
 
 
