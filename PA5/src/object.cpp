@@ -73,7 +73,8 @@ Assimp::Importer importer;
 
 
 //read obj file
-const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate );
+const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate |         
+                                           aiProcess_JoinIdenticalVertices );
 
 
 // loop through meshes
@@ -90,6 +91,9 @@ for( int i = 0; i < object->mNumMeshes; ++i ){
     aiFace face = mesh->mFaces[j];
     for( int k = 0; k < face.mNumIndices; ++k ){
       printf("%d, ", face.mIndices[k]);
+
+      Indices.push_back( face.mIndices[k] );
+
     }
     printf("\r\n");
   }
@@ -100,6 +104,7 @@ for( int i = 0; i < object->mNumMeshes; ++i ){
   for( int j = 0; j < mesh->mNumVertices; ++j ){
     aiVector3D vertex = mesh->mVertices[j];
       printf("%f, %f, %f\r\n", vertex.x, vertex.y, vertex.z);
+      Vertices.push_back( {{vertex.x,vertex.y,vertex.z}, {0,0,0}} );
   }
   printf("\r\n");
  
