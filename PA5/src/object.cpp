@@ -76,6 +76,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
                                            aiProcess_JoinIdenticalVertices );
 
   // loop through meshes
+  int totalMeshVerts = 0;
   for( int i = 0; i < object->mNumMeshes; ++i ){
 
     // get mesh array
@@ -85,8 +86,9 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     for( int j = 0; j < mesh->mNumFaces; ++j ){
       aiFace face = mesh->mFaces[j];
       for( int k = 0; k < face.mNumIndices; ++k ){
-        Indices.push_back( face.mIndices[k] );
+        Indices.push_back( face.mIndices[k] + totalMeshVerts );
       }
+
     }
 
     // get color value
@@ -99,12 +101,13 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     // read vertex values and store in VBO
     for( int j = 0; j < mesh->mNumVertices; ++j ){
       aiVector3D vertex = mesh->mVertices[j];
-
       Vertices.push_back( {
         {vertex.x,vertex.y,vertex.z},
         {color.r, color.g, color.b}
       });
     }
+
+  totalMeshVerts += Vertices.size();
   }
 
   init(oRadius, oSpeed);
