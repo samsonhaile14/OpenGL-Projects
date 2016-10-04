@@ -17,7 +17,7 @@ class Object
 {
   public:
     Object(float oRadius, float oSpeed);
-    Object(float oRadius, float oSpeed, std::string objPath );
+    Object(float oRadius, float oSpeed, std::string objPath);
     void init( float oRadius, float oSpeed );
     int loadObj( std::string fName, std::vector< glm::vec3 > colorList,
                       std::vector< std::string > colorNames );

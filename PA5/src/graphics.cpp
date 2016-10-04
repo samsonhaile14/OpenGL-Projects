@@ -53,7 +53,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   else{
-   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0] );
+   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0]); 
   }
 
   // Set up the shaders

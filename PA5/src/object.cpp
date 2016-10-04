@@ -64,64 +64,50 @@ Object::Object(float oRadius, float oSpeed)
 init(oRadius, oSpeed);
 }
 
-Object::Object(float oRadius, float oSpeed, std::string objPath )
+Object::Object(float oRadius, float oSpeed, std::string objPath)
 {
-printf("\r\nFrom file %s\r\n", objPath.c_str());
-//variables and initialization
+  //variables and initialization
 
-Assimp::Importer importer;
+  Assimp::Importer importer;
 
 
-//read obj file
-const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate |         
+  //read obj file
+  const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate |         
                                            aiProcess_JoinIdenticalVertices );
 
+  // loop through meshes
+  for( int i = 0; i < object->mNumMeshes; ++i ){
 
-// loop through meshes
-printf("Num Meshes: %d\r\n", object->mNumMeshes);
-printf("One for each material?\r\n\r\n");
-for( int i = 0; i < object->mNumMeshes; ++i ){
+    // get mesh array
+    aiMesh *mesh = object->mMeshes[i];
 
-  // get mesh array
-  aiMesh *mesh = object->mMeshes[i];
-
-  // read face values
-  printf("Num Faces in Mesh %d: %d\r\n", i, mesh->mNumFaces);
-  for( int j = 0; j < mesh->mNumFaces; ++j ){
-    aiFace face = mesh->mFaces[j];
-    for( int k = 0; k < face.mNumIndices; ++k ){
-      printf("%d, ", face.mIndices[k]);
-
-      Indices.push_back( face.mIndices[k] );
-
+    // get face values
+    for( int j = 0; j < mesh->mNumFaces; ++j ){
+      aiFace face = mesh->mFaces[j];
+      for( int k = 0; k < face.mNumIndices; ++k ){
+        Indices.push_back( face.mIndices[k] );
+      }
     }
-    printf("\r\n");
+
+    // get color value
+    unsigned int mtlIndex = mesh->mMaterialIndex;
+    aiMaterial *material = object->mMaterials[mtlIndex]; 
+
+    aiColor3D color;
+    material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
+
+    // read vertex values and store in VBO
+    for( int j = 0; j < mesh->mNumVertices; ++j ){
+      aiVector3D vertex = mesh->mVertices[j];
+
+      Vertices.push_back( {
+        {vertex.x,vertex.y,vertex.z},
+        {color.r, color.g, color.b}
+      });
+    }
   }
-  printf("\r\n");
-/*
-  // read vertex values
-  printf("Num Vertices in Mesh %d: %d\r\n", i, mesh->mNumVertices);
-  for( int j = 0; j < mesh->mNumVertices; ++j ){
-    aiVector3D vertex = mesh->mVertices[j];
-      printf("%f, %f, %f\r\n", vertex.x, vertex.y, vertex.z);
-      Vertices.push_back( {{vertex.x,vertex.y,vertex.z}, {0,0,0}} );
-  }
-  printf("\r\n");
-*/ 
-}
 
-
-
-/*
-
-
-insert code for reading stuff
-
-
-*/
-
-init(oRadius, oSpeed);
-
+  init(oRadius, oSpeed);
 }
 
 
