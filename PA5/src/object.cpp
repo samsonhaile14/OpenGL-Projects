@@ -66,7 +66,7 @@ init(oRadius, oSpeed);
 
 Object::Object(float oRadius, float oSpeed, std::string objPath )
 {
-
+printf("\r\nFrom file %s\r\n", objPath.c_str());
 //variables and initialization
 
 Assimp::Importer importer;
@@ -74,7 +74,38 @@ Assimp::Importer importer;
 
 //read obj file
 const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate );
-aiMesh *mesh = object->mMeshes[0];
+
+
+// loop through meshes
+printf("Num Meshes: %d\r\n", object->mNumMeshes);
+printf("One for each material?\r\n\r\n");
+for( int i = 0; i < object->mNumMeshes; ++i ){
+
+  // get mesh array
+  aiMesh *mesh = object->mMeshes[i];
+
+  // read face values
+  printf("Num Faces in Mesh %d: %d\r\n", i, mesh->mNumFaces);
+  for( int j = 0; j < mesh->mNumFaces; ++j ){
+    aiFace face = mesh->mFaces[j];
+    for( int k = 0; k < face.mNumIndices; ++k ){
+      printf("%d, ", face.mIndices[k]);
+    }
+    printf("\r\n");
+  }
+  printf("\r\n");
+
+  // read vertex values
+  printf("Num Vertices in Mesh %d: %d\r\n", i, mesh->mNumVertices);
+  for( int j = 0; j < mesh->mNumVertices; ++j ){
+    aiVector3D vertex = mesh->mVertices[j];
+      printf("%f, %f, %f\r\n", vertex.x, vertex.y, vertex.z);
+  }
+  printf("\r\n");
+ 
+}
+
+
 
 /*
 
