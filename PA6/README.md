@@ -3,12 +3,13 @@ PA6 Run instructions
 Follow the following instructions to compile and run the code:
 
 In the 'CS680_Haile/PA6' directory, execute the following commands:
-'''
+
+```
 mkdir build
 cd build
 cmake ..
 make
-'''
+```
 
 
 Instructions for executing
@@ -20,7 +21,7 @@ The format of the execution of the program follows:
 the specified obj and mtl file.    
 
 If the user wants to use his/her own objects, they can move their objects into  
-the objects directory of PA4 and specify those objects when running the program.    
+the objects directory of PA6 and specify those objects when running the program.    
 
 The program is able to run with only a obj file  
 (e.g. command: "./Tutorial box.obj" will work)  
