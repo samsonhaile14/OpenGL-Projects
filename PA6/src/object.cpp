@@ -29,14 +29,14 @@ Object::Object(float oRadius, float oSpeed)
   */
 
   Vertices = {
-    {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 0.0f}},
-    {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-    {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-    {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, 1.0f}},
-    {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 0.0f}},
-    {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f, 1.0f}},
-    {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f, 1.0f}},
-    {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f, 1.0f}}
+    {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}},
+    {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f}},
+    {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}},
+    {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}},
+    {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}}
   };
 
   Indices = {
@@ -140,9 +140,12 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     // read vertex values and store in VBO
     for( int j = 0; j < mesh->mNumVertices; ++j ){
       aiVector3D vertex = mesh->mVertices[j];
+
+      aiVector3D uv = mesh->mTextureCoords[0][j];
+
       Vertices.push_back( {
         {vertex.x,vertex.y,vertex.z},
-        {color.r, color.g, color.b}
+        {uv.x,uv.y}
       });
     }
 
