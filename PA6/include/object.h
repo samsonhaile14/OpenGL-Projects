@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <stdio.h>
-#include <fstream>
+#include <iostream>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -28,6 +28,8 @@ class Object
     void Update(unsigned int dt, float movement[], bool pause);
     void Render();
 
+    void Bind(GLenum TextureUnit, int texIndx);
+
     glm::mat4 GetModel();
 
   private:
@@ -36,6 +38,11 @@ class Object
     std::vector<unsigned int> Indices;
     GLuint VB;
     GLuint IB;
+
+    std::vector< Magick::Image > skins;
+    std::vector< Magick::Blob > blobs;
+    std::vector< GLuint > texObjs;
+    std::vector< GLenum > texTargs;
 
     float orbitAngle;
     float rotAngle;

@@ -75,6 +75,8 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
   const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate |         
                                            aiProcess_JoinIdenticalVertices );
 
+  //get texture file name
+
   // loop through meshes
   int totalMeshVerts = 0;
   for( int i = 0; i < object->mNumMeshes; ++i ){
@@ -95,6 +97,43 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     unsigned int mtlIndex = mesh->mMaterialIndex;
     aiMaterial *material = object->mMaterials[mtlIndex]; 
 
+    //set up texture   
+       aiString texFileName;
+       Magick::Blob m_blob;
+       GLuint texObj;
+       aiReturn texFound = material->GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
+
+       try {
+          Magick::Image skin;
+          std::string rStr = texFileName.C_Str();
+          skin.read( "../objects/" + rStr );
+          skin.write( &m_blob, "RGBA");
+          blobs.push_back(m_blob);
+
+          skins.push_back( skin );
+       }
+       catch (Magick::Error& Error) {
+         std::cout << "Error loading texture '" << texFileName.C_Str() << "': " << 
+                      Error.what() << std::endl;
+         return;
+       }
+
+       glGenTextures( 1, &texObj );
+       texObjs.push_back( texObj );
+
+       texTargs.push_back(GL_TEXTURE_2D);
+
+       glBindTexture(texTargs[texTargs.size()-1],texObj);
+
+       glTexImage2D(texTargs[texTargs.size()-1], 0, GL_RGBA, skins[skins.size()-1].columns(), 
+                     skins[skins.size()-1].rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 
+                     m_blob.data());
+
+       glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+    //color related stuff
     aiColor3D color;
     material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
@@ -179,12 +218,21 @@ glm::mat4 Object::GetModel()
 
 void Object::Render()
 {
+
+  int indx;
+
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
   glBindBuffer(GL_ARRAY_BUFFER, VB);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex,color));
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+
+  for( indx = 0; indx < texObjs.size(); indx++ ){
+
+     Bind( GL_TEXTURE0, indx );
+
+  }
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 
@@ -193,4 +241,10 @@ void Object::Render()
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
 }
+
+void Object::Bind(GLenum TextureUnit, int texIndx){
+   glActiveTexture(TextureUnit);
+   glBindTexture(texTargs[texIndx], texObjs[texIndx] );
+}
+
 

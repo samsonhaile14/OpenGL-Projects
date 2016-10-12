@@ -30,6 +30,8 @@ class Graphics
     GLint m_viewMatrix;
     GLint m_modelMatrix;
 
+    GLint gSampler;
+
     Object *m_BObj;
 
 

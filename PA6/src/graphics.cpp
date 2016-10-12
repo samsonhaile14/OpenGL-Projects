@@ -109,6 +109,8 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
+  gSampler = m_shader->GetUniformLocation( "gSampler" );
+
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -132,6 +134,8 @@ void Graphics::Render()
   // Start the correct program
   m_shader->Enable();
 
+  glUniform1i(gSampler,0);
+
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
@@ -139,7 +143,7 @@ void Graphics::Render()
   // Render the objects  
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_BObj->GetModel()));
-  m_BObj->Render();  
+  m_BObj->Render();
 
 
   // Get any errors from OpenGL
