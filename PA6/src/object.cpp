@@ -132,11 +132,6 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
        glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
        glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
-    //color related stuff
-    aiColor3D color;
-    material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
-
     // read vertex values and store in VBO
     for( int j = 0; j < mesh->mNumVertices; ++j ){
       aiVector3D vertex = mesh->mVertices[j];
@@ -222,8 +217,6 @@ glm::mat4 Object::GetModel()
 void Object::Render()
 {
 
-  int indx;
-
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
@@ -231,11 +224,8 @@ void Object::Render()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
 
-  for( indx = 0; indx < texObjs.size(); indx++ ){
-
-     Bind( GL_TEXTURE0, indx );
-
-  }
+  Bind( GL_TEXTURE0, 0 );
+  Bind( GL_TEXTURE1, 1 );
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 

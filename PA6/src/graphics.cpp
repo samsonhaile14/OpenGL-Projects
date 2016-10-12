@@ -134,7 +134,7 @@ void Graphics::Render()
   // Start the correct program
   m_shader->Enable();
 
-  glUniform1i(gSampler,0);
+  glUniform1i(gSampler,1);
 
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
