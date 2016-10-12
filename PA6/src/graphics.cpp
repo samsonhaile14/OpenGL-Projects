@@ -134,16 +134,13 @@ void Graphics::Render()
   // Start the correct program
   m_shader->Enable();
 
-  glUniform1i(gSampler,1);
-
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
 
   // Render the objects  
-
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_BObj->GetModel()));
-  m_BObj->Render();
+  m_BObj->Render(gSampler);
 
 
   // Get any errors from OpenGL

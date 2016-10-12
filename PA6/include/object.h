@@ -26,7 +26,7 @@ class Object
 
     ~Object();
     void Update(unsigned int dt, float movement[], bool pause);
-    void Render();
+    void Render(GLint gSampler);
 
     void Bind(GLenum TextureUnit, int texIndx);
 
@@ -36,13 +36,14 @@ class Object
     glm::mat4 model;
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
+    std::vector<int> indicesStart;
+    std::vector<unsigned int> indicesSize;
     GLuint VB;
     GLuint IB;
 
     std::vector< Magick::Image > skins;
     std::vector< Magick::Blob > blobs;
     std::vector< GLuint > texObjs;
-    std::vector< GLenum > texTargs;
 
     float orbitAngle;
     float rotAngle;

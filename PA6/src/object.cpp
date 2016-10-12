@@ -85,6 +85,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     aiMesh *mesh = object->mMeshes[i];
 
     // get face values
+    indicesStart.push_back( Indices.size());
     for( int j = 0; j < mesh->mNumFaces; ++j ){
       aiFace face = mesh->mFaces[j];
       for( int k = 0; k < face.mNumIndices; ++k ){
@@ -92,6 +93,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
       }
 
     }
+    indicesSize.push_back( Indices.size() - indicesStart[i]);
 
     // get color value
     unsigned int mtlIndex = mesh->mMaterialIndex;
@@ -121,16 +123,14 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
        glGenTextures( 1, &texObj );
        texObjs.push_back( texObj );
 
-       texTargs.push_back(GL_TEXTURE_2D);
+       glBindTexture(GL_TEXTURE_2D,texObj);
 
-       glBindTexture(texTargs[texTargs.size()-1],texObj);
-
-       glTexImage2D(texTargs[texTargs.size()-1], 0, GL_RGBA, skins[skins.size()-1].columns(), 
+       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, skins[skins.size()-1].columns(), 
                      skins[skins.size()-1].rows(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 
                      m_blob.data());
 
-       glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-       glTexParameterf(texTargs[texTargs.size()-1], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // read vertex values and store in VBO
     for( int j = 0; j < mesh->mNumVertices; ++j ){
@@ -154,7 +154,6 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
 void Object::init( float oRadius, float oSpeed )
 {
 
-
   rotAngle = 0.0f;
   orbitAngle = 0.0f;
   orbitRadius = oRadius;
@@ -167,7 +166,6 @@ void Object::init( float oRadius, float oSpeed )
   glGenBuffers(1, &IB);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
-
 
 }
 
@@ -214,8 +212,10 @@ glm::mat4 Object::GetModel()
   return model;
 }
 
-void Object::Render()
+void Object::Render(GLint gSampler)
 {
+
+  int indx;
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -224,12 +224,18 @@ void Object::Render()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
 
-  Bind( GL_TEXTURE0, 0 );
-  Bind( GL_TEXTURE1, 1 );
+  for( indx = 0; indx < texObjs.size(); indx++ ){
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+     glUniform1i(gSampler,indx);
 
-  glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+
+     Bind(GL_TEXTURE0 + indx, indx);
+
+     glDrawElements(GL_TRIANGLES, indicesSize[indx], GL_UNSIGNED_INT, 
+                    (void*) (indicesStart[indx]*sizeof(unsigned int)));
+
+  }
 
   glDisableVertexAttribArray(0);
   glDisableVertexAttribArray(1);
@@ -237,7 +243,7 @@ void Object::Render()
 
 void Object::Bind(GLenum TextureUnit, int texIndx){
    glActiveTexture(TextureUnit);
-   glBindTexture(texTargs[texIndx], texObjs[texIndx] );
+   glBindTexture(GL_TEXTURE_2D, texObjs[texIndx] );
 }
 
 
