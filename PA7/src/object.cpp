@@ -100,22 +100,23 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
     aiMaterial *material = object->mMaterials[mtlIndex]; 
 
     //set up texture   
-       aiString texFileName;
+//       aiString texFileName;
        Magick::Blob m_blob;
        GLuint texObj;
-       aiReturn texFound = material->GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
+//       aiReturn texFound = material->GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
 
        try {
           Magick::Image skin;
-          std::string rStr = texFileName.C_Str();
-          skin.read( "../objects/" + rStr );
+//          std::string rStr = texFileName.C_Str();
+          std::string texFile = "../textures/" + textureFileName;
+          skin.read( texFile )
           skin.write( &m_blob, "RGBA");
           blobs.push_back(m_blob);
 
           skins.push_back( skin );
        }
        catch (Magick::Error& Error) {
-         std::cout << "Error loading texture '" << texFileName.C_Str() << "': " << 
+         std::cout << "Error loading texture '" << textureFileName.c_str() << "': " << 
                       Error.what() << std::endl;
          return;
        }

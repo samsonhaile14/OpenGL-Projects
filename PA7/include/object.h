@@ -49,6 +49,8 @@ class Object
     float rotAngle;
     float orbitRadius;
     float orbitSpeed;
+
+    std::string textureFileName = "template.jpg";
 };
 
 #endif /* OBJECT_H */
