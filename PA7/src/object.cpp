@@ -109,7 +109,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
           Magick::Image skin;
 //          std::string rStr = texFileName.C_Str();
           std::string texFile = "../textures/" + textureFileName;
-          skin.read( texFile )
+          skin.read( texFile );
           skin.write( &m_blob, "RGBA");
           blobs.push_back(m_blob);
 
