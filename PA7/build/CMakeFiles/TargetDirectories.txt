@@ -1,0 +1,4 @@
+/home/hbs/Desktop/CS480/CS680_Haile/PA7/build/CMakeFiles/edit_cache.dir
+/home/hbs/Desktop/CS480/CS680_Haile/PA7/build/CMakeFiles/Tutorial_SUCCESSFUL.dir
+/home/hbs/Desktop/CS480/CS680_Haile/PA7/build/CMakeFiles/rebuild_cache.dir
+/home/hbs/Desktop/CS480/CS680_Haile/PA7/build/CMakeFiles/Tutorial.dir
