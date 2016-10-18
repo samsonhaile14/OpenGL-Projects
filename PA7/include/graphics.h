@@ -12,7 +12,7 @@ using namespace std;
 class Graphics
 {
   public:
-    Graphics(std::vector< std::string > graphicFiles);
+    Graphics(std::vector< Planet > solSys);
     ~Graphics();
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[], bool pause);
@@ -21,7 +21,7 @@ class Graphics
   private:
     std::string ErrorString(GLenum error);
    
-    std::vector< std::string > oFiles;
+    std::vector< Planet > setting;
 
     Camera *m_camera;
     Shader *m_shader;
@@ -32,7 +32,7 @@ class Graphics
 
     GLint gSampler;
 
-    Object *m_BObj;
+    std::vector< Object > pObjs;
 
 
     bool clockwise = true;

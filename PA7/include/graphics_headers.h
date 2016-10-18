@@ -2,6 +2,7 @@
 #define GRAPHICS_HEADERS_H
 
 #include <iostream>
+#include <vector>
 
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 
@@ -21,6 +22,27 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 #define INVALID_UNIFORM_LOCATION 0x7fffffff
+
+struct Sphere
+{
+
+std::string name;
+std::string textureFile;
+
+float diameter;
+float orbitRadius;
+float orbitSpeed;
+float rotationPeriod;
+
+};
+
+struct Planet
+{
+
+Sphere pAttr;
+std::vector<Sphere> moons;
+
+};
 
 struct Vertex
 {

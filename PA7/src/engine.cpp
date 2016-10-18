@@ -2,13 +2,13 @@
 #include "engine.h"
 
 Engine::Engine(string name, int width, int height, 
-               std::vector< std::string > fileNames)
+               std::vector< Planet > setting)
 {
   m_WINDOW_NAME = name;
   m_WINDOW_WIDTH = width;
   m_WINDOW_HEIGHT = height;
   m_FULLSCREEN = false;
-  gFiles = fileNames;
+  solSys = setting;
 }
 
 Engine::Engine(string name)
@@ -38,7 +38,7 @@ bool Engine::Initialize()
   }
 
   // Start the graphics
-  m_graphics = new Graphics(gFiles);
+  m_graphics = new Graphics(solSys);
   if(!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT))
   {
     printf("The graphics failed to initialize.\n");

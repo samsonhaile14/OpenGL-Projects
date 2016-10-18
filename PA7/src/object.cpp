@@ -64,12 +64,13 @@ Object::Object(float oRadius, float oSpeed)
 init(oRadius, oSpeed);
 }
 
-Object::Object(float oRadius, float oSpeed, std::string objPath)
+Object::Object(float oRadius, float oSpeed, std::string objPath, std::string texturePath)
 {
   //variables and initialization
 
   Assimp::Importer importer;
 
+  textureFileName = texturePath;
 
   //read obj file
   const aiScene *object = importer.ReadFile( objPath, aiProcess_Triangulate |         
@@ -108,7 +109,7 @@ Object::Object(float oRadius, float oSpeed, std::string objPath)
        try {
           Magick::Image skin;
 //          std::string rStr = texFileName.C_Str();
-          std::string texFile = "../textures/" + textureFileName;
+          std::string texFile = textureFileName;
           skin.read( texFile );
           skin.write( &m_blob, "RGBA");
           blobs.push_back(m_blob);
@@ -205,7 +206,7 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   model = glm::translate(model, glm::vec3(distX,0.0,distZ));
 
   //rotate cube
-  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+  //model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
 
 }
 glm::mat4 Object::GetModel()

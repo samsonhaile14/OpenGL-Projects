@@ -1,9 +1,9 @@
 #include "graphics.h"
 
-Graphics::Graphics(std::vector< std::string > graphicFiles )
+Graphics::Graphics(std::vector< Planet > solSys )
 {
 
-oFiles = graphicFiles;
+setting = solSys;
 
 }
 
@@ -46,14 +46,16 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-  // Create the object
-  
-  if( oFiles.size() == 0 ){
-   m_BObj = new Object(0.0f, 0.0f, "../objects/box.obj" );
-  }
+  // Create the Objects
+  int indx;
 
-  else{
-   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0]); 
+  for( indx = 0; indx < setting.size(); indx++ ){
+
+     Object temp( 10, (setting[indx].pAttr.orbitSpeed)*10/(setting[indx].pAttr.orbitRadius) , "../objects/sphere.obj", 
+                        "../textures/" + setting[indx].pAttr.textureFile );
+
+     pObjs.push_back( temp );
+
   }
 
   // Set up the shaders
@@ -121,7 +123,13 @@ bool Graphics::Initialize(int width, int height)
 void Graphics::Update(unsigned int dt, float movement[], bool pause)
 {
 
-m_BObj->Update( dt, movement, pause);
+int indx;
+
+for( indx = 0; indx < pObjs.size(); indx++ ){
+
+   pObjs[indx].Update( dt, movement, pause);
+
+   }
 
 }
 
@@ -138,10 +146,19 @@ void Graphics::Render()
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
 
-  // Render the objects  
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_BObj->GetModel()));
-  m_BObj->Render(gSampler);
+  // Render the objects
+  int indx;
+  for( indx = 0; indx < pObjs.size(); indx++ ){
 
+      float pSize = setting[indx].pAttr.diameter/100000.0;
+      glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(
+
+                  (  (pObjs[indx].GetModel()) * glm::scale(glm::vec3(pSize,pSize,pSize)) )
+
+                  ));
+      pObjs[indx].Render(gSampler);
+
+  }
 
   // Get any errors from OpenGL
   auto error = glGetError();
