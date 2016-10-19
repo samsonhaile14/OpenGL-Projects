@@ -68,6 +68,13 @@ void Engine::Run()
     }
 
     // Update and render the graphics
+
+      // lock onto planet if index given
+    if(planetLock >= 0 && planetLock < 9)
+      m_graphics->goToPlanet(planetLock);
+    else
+      m_graphics->resetCamera();
+
     m_graphics->Update(m_DT, movement, pause);
     m_graphics->Render();
 
@@ -135,6 +142,62 @@ void Engine::Keyboard()
       }
     }
 
+    // controls to view planets/solar system
+    else if (m_event.key.keysym.sym == SDLK_1)
+    {
+      planetLock = 0;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_2)
+    {
+      planetLock = 1;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_3)
+    {
+      planetLock = 2;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_4)
+    {
+      planetLock = 3;
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_5)
+    {
+      planetLock = 4;
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_6)
+    {
+      planetLock = 5;
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_7)
+    {
+      planetLock = 6;
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_8)
+    {
+      planetLock = 7;
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_9)
+    {
+      planetLock = 8;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_0)
+    {
+      planetLock = -1;
+    }
+
   }
 
   // Handle mouse event to pause everything
@@ -161,3 +224,4 @@ long long Engine::GetCurrentTimeMillis()
   long long ret = t.tv_sec * 1000 + t.tv_usec / 1000;
   return ret;
 }
+

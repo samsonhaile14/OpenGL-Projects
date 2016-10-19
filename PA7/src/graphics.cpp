@@ -200,3 +200,21 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
+// function: have camera move towards spcified position, facing origin
+void Graphics::UpdateCamera(glm::vec3 pos){
+
+  m_camera->Update(pos);
+}
+
+// function: have camera move towards a planet
+void Graphics::goToPlanet(int planetIndex){
+
+    // move camera towards planet coordinates
+    glm::vec3 newPos = pObjs[planetIndex].getPosition();
+    m_camera->goToPlanet(newPos);
+}
+
+// function: move camera to top down view of solar system
+void Graphics::resetCamera(){
+    m_camera->Update(glm::vec3(-200.0,300.0,-350.0));
+}

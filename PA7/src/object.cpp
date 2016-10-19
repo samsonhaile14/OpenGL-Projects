@@ -139,14 +139,14 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   }
 
   //specified variables distX and distZ to specify translation of cube in orbit
-  float distX = specs.orbitRadius * glm::cos(orbitAngle);
+  distX = specs.orbitRadius * glm::cos(orbitAngle);
 
-  float distZ = specs.orbitRadius * glm::sin(orbitAngle);
+  distZ = specs.orbitRadius * glm::sin(orbitAngle);
    
   //return cube back to origin
   float ratio = specs.diameter;
 
-  model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
+//  model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
 
   model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
 
@@ -154,8 +154,8 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   model = glm::translate(model, glm::vec3(distX,0.0,distZ));
 
   //rotate cube
-  //model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
-
+  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+//  model = glm::rotate( model, -90.0f, glm::vec3(0.0, 0.0, 1.0));
 }
 glm::mat4 Object::GetModel()
 {
@@ -196,4 +196,7 @@ void Object::Bind(GLenum TextureUnit, int texIndx){
    glBindTexture(GL_TEXTURE_2D, texObjs[texIndx] );
 }
 
-
+// function: obtain position of center of the object
+glm::vec3 Object::getPosition(){
+   return glm::vec3(distX, distY, distZ);
+}
