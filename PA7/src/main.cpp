@@ -3,6 +3,7 @@
 
 #include "engine.h"
 
+void normData( std::vector<Planet> &data);
 void configRead( std::vector<Planet> &setting, fstream &fin );
 std::string readSphere( Sphere &obj, fstream &fin );
 
@@ -41,6 +42,27 @@ int main(int argc, char **argv)
   delete engine;
   engine = NULL;
   return 0;
+}
+
+void normData( std::vector<Planet> &data){
+    float sum_dia;
+    float sum_rad;
+    float sum_speed;
+    float sum_per;
+
+    for ( int i = 0; i < data.size(); i++){
+        sum_dia += data[i].pAttr.diameter;
+        sum_rad += data[i].pAttr.orbitRadius;
+        sum_speed += data[i].pAttr.orbitSpeed;
+        sum_per += data[i].pAttr.rotationPeriod;
+    }
+
+    for ( int i = 0; i < data.size(); i++){
+        data[i].pAttr.n_diameter = data[i].pAttr.diameter / sum_dia;
+        data[i].pAttr.n_orbitRadius = data[i].pAttr.orbitRadius / sum_rad;
+        data[i].pAttr.n_orbitSpeed = data[i].pAttr.orbitSpeed / sum_speed;
+        data[i].pAttr.n_rotationPeriod = data[i].pAttr.rotationPeriod / sum_per;
+    }
 }
 
 void configRead( std::vector<Planet> &setting, fstream &fin ){
@@ -85,7 +107,8 @@ void configRead( std::vector<Planet> &setting, fstream &fin ){
       setting[indx].moons.push_back( obj );      
 
    }
-
+   
+   normData(setting);
    
 }
 
