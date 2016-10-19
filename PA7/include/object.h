@@ -16,9 +16,8 @@
 class Object
 {
   public:
-    Object(float oRadius, float oSpeed);
-    Object(float oRadius, float oSpeed, std::string objPath, std::string texturePath);
-    void init( float oRadius, float oSpeed );
+    Object(Sphere setting, std::string objPath, std::string texturePath);
+    void init( Sphere setting );
     int loadObj( std::string fName, std::vector< glm::vec3 > colorList,
                       std::vector< std::string > colorNames );
 
@@ -45,8 +44,8 @@ class Object
 
     float orbitAngle;
     float rotAngle;
-    float orbitRadius;
-    float orbitSpeed;
+    
+    Sphere specs;
 
     std::string textureFileName = "template.jpg";
 };

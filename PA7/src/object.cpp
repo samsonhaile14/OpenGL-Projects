@@ -1,70 +1,7 @@
 #include "object.h"
 
-Object::Object(float oRadius, float oSpeed)
-{  
-  /*
-    # Blender File for a Cube
-    o Cube
-    v 1.000000 -1.000000 -1.000000
-    v 1.000000 -1.000000 1.000000
-    v -1.000000 -1.000000 1.000000
-    v -1.000000 -1.000000 -1.000000
-    v 1.000000 1.000000 -0.999999
-    v 0.999999 1.000000 1.000001
-    v -1.000000 1.000000 1.000000
-    v -1.000000 1.000000 -1.000000
-    s off
-    f 2 3 4
-    f 8 7 6
-    f 1 5 6
-    f 2 6 7
-    f 7 8 4
-    f 1 4 8
-    f 1 2 4
-    f 5 8 6
-    f 2 1 6
-    f 3 2 7
-    f 3 7 4
-    f 5 1 8
-  */
 
-  Vertices = {
-    {{1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}},
-    {{1.0f, -1.0f, 1.0f}, {1.0f, 0.0f}},
-    {{-1.0f, -1.0f, 1.0f}, {0.0f, 1.0f}},
-    {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f}},
-    {{1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}},
-    {{1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
-    {{-1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-    {{-1.0f, 1.0f, -1.0f}, {1.0f, 1.0f}}
-  };
-
-  Indices = {
-    2, 3, 4,
-    8, 7, 6,
-    1, 5, 6,
-    2, 6, 7,
-    7, 8, 4,
-    1, 4, 8,
-    1, 2, 4,
-    5, 8, 6,
-    2, 1, 6,
-    3, 2, 7,
-    3, 7, 4,
-    5, 1, 8
-  };
-
-  // The index works at a 0th index
-  for(unsigned int i = 0; i < Indices.size(); i++)
-  {
-    Indices[i] = Indices[i] - 1;
-  }
-
-
-init(oRadius, oSpeed);
-}
-
-Object::Object(float oRadius, float oSpeed, std::string objPath, std::string texturePath)
+Object::Object(Sphere setting, std::string objPath, std::string texturePath)
 {
   //variables and initialization
 
@@ -149,17 +86,24 @@ Object::Object(float oRadius, float oSpeed, std::string objPath, std::string tex
   totalMeshVerts = Vertices.size();
   }
 
-  init(oRadius, oSpeed);
+  init(setting);
 }
 
 
-void Object::init( float oRadius, float oSpeed )
+void Object::init( Sphere setting )
 {
 
   rotAngle = 0.0f;
   orbitAngle = 0.0f;
-  orbitRadius = oRadius;
-  orbitSpeed = oSpeed;
+
+  specs = setting;
+
+  //rescale attributes to be suitable for display
+
+  //specs.diameter /= 100000.0f;
+  specs.orbitRadius /= 10.0f;
+  specs.orbitSpeed /= 1000.0f;
+
 
   glGenBuffers(1, &VB);
   glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -185,21 +129,25 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   if( !pause ){
     if( glm::abs(movement[0]) < 2.0f )
     {
-      rotAngle += dt * (M_PI/1000) * movement[0];
+      rotAngle += ( (float)(dt) / 1000.0f ) * (M_PI) * movement[0] * (1.0f / specs.rotationPeriod);
     }
 
     if( glm::abs(movement[1]) < 2.0f )
     {
-      orbitAngle += dt * (M_PI/10000) * movement[1] * orbitSpeed;  
+      orbitAngle += ( ((float) (dt)) / 1000.0f ) * (M_PI) * movement[1] * specs.orbitSpeed;
     }
   }
 
   //specified variables distX and distZ to specify translation of cube in orbit
-  float distX = orbitRadius * glm::cos(orbitAngle);
+  float distX = specs.orbitRadius * glm::cos(orbitAngle);
 
-  float distZ = orbitRadius * glm::sin(orbitAngle);
+  float distZ = specs.orbitRadius * glm::sin(orbitAngle);
    
   //return cube back to origin
+  float ratio = specs.diameter;
+
+  model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
+
   model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
 
   //move cube to location specified distX and distZ

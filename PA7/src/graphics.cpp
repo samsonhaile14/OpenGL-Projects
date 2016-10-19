@@ -51,7 +51,7 @@ bool Graphics::Initialize(int width, int height)
 
   for( indx = 0; indx < setting.size(); indx++ ){
 
-     Object temp( 10, (setting[indx].pAttr.orbitSpeed)*10/(setting[indx].pAttr.orbitRadius) , "../objects/sphere.obj", 
+     Object temp( setting[indx].pAttr , "../objects/sphere.obj", 
                         "../textures/" + setting[indx].pAttr.textureFile );
 
      pObjs.push_back( temp );
@@ -150,10 +150,9 @@ void Graphics::Render()
   int indx;
   for( indx = 0; indx < pObjs.size(); indx++ ){
 
-      float pSize = setting[indx].pAttr.diameter/100000.0;
       glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(
 
-                  (  (pObjs[indx].GetModel()) * glm::scale(glm::vec3(pSize,pSize,pSize)) )
+                  (pObjs[indx].GetModel())
 
                   ));
       pObjs[indx].Render(gSampler);
