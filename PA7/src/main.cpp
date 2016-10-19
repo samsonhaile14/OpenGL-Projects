@@ -58,10 +58,10 @@ void normData( std::vector<Planet> &data){
     }
 
     for ( int i = 0; i < data.size(); i++){
-        data[i].pAttr.n_diameter = data[i].pAttr.diameter / sum_dia;
-        data[i].pAttr.n_orbitRadius = data[i].pAttr.orbitRadius / sum_rad;
-        data[i].pAttr.n_orbitSpeed = data[i].pAttr.orbitSpeed / sum_speed;
-        data[i].pAttr.n_rotationPeriod = data[i].pAttr.rotationPeriod / sum_per;
+        data[i].pAttr.diameter = data[i].pAttr.diameter / sum_dia;
+        data[i].pAttr.orbitRadius = data[i].pAttr.orbitRadius / sum_rad;
+        data[i].pAttr.orbitSpeed = data[i].pAttr.orbitSpeed / sum_speed;
+        data[i].pAttr.rotationPeriod = data[i].pAttr.rotationPeriod / sum_per;
     }
 }
 

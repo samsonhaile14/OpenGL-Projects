@@ -100,9 +100,10 @@ void Object::init( Sphere setting )
 
   //rescale attributes to be suitable for display
 
-  //specs.diameter /= 100000.0f;
-  specs.orbitRadius /= 10.0f;
-  specs.orbitSpeed /= 1000.0f;
+  specs.diameter *= 8.0f;
+  specs.orbitRadius *= 100.0f;
+  specs.orbitSpeed *= 5.0f;
+  specs.rotationPeriod *= 103.0f;
 
 
   glGenBuffers(1, &VB);
@@ -146,9 +147,12 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   //return cube back to origin
   float ratio = specs.diameter;
 
+  if( ratio < 1.0f )
+    ratio = 1.0f;
+
   model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
 
-  model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0,0.0,0.0));
+  model = glm::translate(model, glm::vec3(0.0,0.0,0.0));
 
   //move cube to location specified distX and distZ
   model = glm::translate(model, glm::vec3(distX,0.0,distZ));

@@ -48,13 +48,27 @@ bool Graphics::Initialize(int width, int height)
 
   // Create the Objects
   int indx;
+  int mIndx;
 
+  //setting[0].pAttr.diameter = 0.01f;
   for( indx = 0; indx < setting.size(); indx++ ){
+
+     vector< Object > subObjs;
 
      Object temp( setting[indx].pAttr , "../objects/sphere.obj", 
                         "../textures/" + setting[indx].pAttr.textureFile );
 
+     for( mIndx = 0; mIndx < setting[indx].moons.size(); mIndx++ ){
+         Object subTemp( setting[indx].moons[mIndx] , "../objects/sphere.obj", 
+                        "../textures/" + setting[indx].moons[mIndx].textureFile );
+
+         subObjs.push_back( subTemp );
+
+     }
+
+
      pObjs.push_back( temp );
+     mObjs.push_back( subObjs );
 
   }
 
@@ -123,11 +137,16 @@ bool Graphics::Initialize(int width, int height)
 void Graphics::Update(unsigned int dt, float movement[], bool pause)
 {
 
-int indx;
+   int indx;
+   int mIndx;
 
-for( indx = 0; indx < pObjs.size(); indx++ ){
+   for( indx = 0; indx < pObjs.size(); indx++ ){
 
-   pObjs[indx].Update( dt, movement, pause);
+      pObjs[indx].Update( dt, movement, pause);
+
+      for( mIndx = 0; mIndx < mObjs[indx].size(); mIndx++ ){
+         mObjs[indx][mIndx].Update(dt,movement,pause);
+      }
 
    }
 
@@ -144,18 +163,24 @@ void Graphics::Render()
 
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
-  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
+  glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(glm::translate(glm::vec3(0.0,0.0,-20.0)) * m_camera->GetView())); 
 
   // Render the objects
   int indx;
+  int mIndx;
   for( indx = 0; indx < pObjs.size(); indx++ ){
 
       glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(
-
                   (pObjs[indx].GetModel())
-
                   ));
       pObjs[indx].Render(gSampler);
+
+      for( mIndx = 0; mIndx < mObjs[indx].size(); mIndx++ ){
+         glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(
+                     (pObjs[indx].GetModel() * mObjs[indx][mIndx].GetModel())
+                     ));
+         mObjs[indx][mIndx].Render(gSampler);         
+      }
 
   }
 

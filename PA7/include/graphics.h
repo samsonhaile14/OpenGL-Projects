@@ -33,6 +33,7 @@ class Graphics
     GLint gSampler;
 
     std::vector< Object > pObjs;
+    std::vector< vector< Object > > mObjs;
 
 
     bool clockwise = true;
