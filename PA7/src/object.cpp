@@ -154,7 +154,7 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   model = glm::translate(model, glm::vec3(distX,0.0,distZ));
 
   //rotate cube
-  //model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
 
 }
 glm::mat4 Object::GetModel()
