@@ -17,6 +17,9 @@ class Graphics
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[], bool pause);
     void Render();
+    void UpdateCamera(glm::vec3);
+    void goToPlanet(int);
+    void resetCamera();
 
   private:
     std::string ErrorString(GLenum error);

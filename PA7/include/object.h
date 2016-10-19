@@ -29,6 +29,8 @@ class Object
 
     glm::mat4 GetModel();
 
+    glm::vec3 getPosition();
+
   private:
     glm::mat4 model;
     std::vector<Vertex> Vertices;
@@ -44,6 +46,10 @@ class Object
 
     float orbitAngle;
     float rotAngle;
+
+    float distX;
+    float distY = 0.0f;
+    float distZ;
     
     Sphere specs;
 

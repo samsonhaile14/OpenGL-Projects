@@ -23,7 +23,11 @@ bool Camera::Initialize(int w, int h)
   projection = glm::perspective( 45.0f, //the FoV typically 90 degrees is good which is what this is set to
                                  float(w)/float(h), //Aspect Ratio, so Circles stay Circular
                                  0.01f, //Distance to the near plane, normally a small value like this
+<<<<<<< HEAD
+                                 75.0f); //Distance to the far plane, 
+=======
                                  10000.0f); //Distance to the far plane, 
+>>>>>>> 2402b640fcebaa67604cdee4f678f743c81adc0a
   return true;
 }
 
