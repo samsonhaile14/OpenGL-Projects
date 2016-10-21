@@ -45,16 +45,37 @@ int main(int argc, char **argv)
 }
 
 void normData( std::vector<Planet> &data){
-    float sum_dia;
-    float sum_rad;
-    float sum_speed;
-    float sum_per;
+    float sum_dia = 0;
+    float mSum_dia = 0;
+    float sum_rad = 0;
+    float mSum_rad = 0;
+    float sum_speed = 0;
+    float mSum_speed = 0;
+    float sum_per = 0;
+    float mSum_per = 0;
 
     for ( int i = 0; i < data.size(); i++){
         sum_dia += data[i].pAttr.diameter;
         sum_rad += data[i].pAttr.orbitRadius;
         sum_speed += data[i].pAttr.orbitSpeed;
         sum_per += data[i].pAttr.rotationPeriod;
+
+       for ( int j = 0; j < data[i].moons.size(); j++){
+           mSum_dia += data[i].moons[j].diameter;
+           mSum_rad += data[i].moons[j].orbitRadius;
+           mSum_speed += data[i].moons[j].orbitSpeed;
+           mSum_per += data[i].moons[j].rotationPeriod;
+
+       }
+
+       for ( int j = 0; j < data[i].moons.size(); j++){
+           data[i].moons[j].diameter /= mSum_dia * 100.0;
+           data[i].moons[j].orbitRadius /= mSum_rad * 100.0;
+           data[i].moons[j].orbitSpeed /= mSum_speed * 100.0;
+           data[i].moons[j].rotationPeriod /= mSum_per * 100.0;
+
+       } 
+
     }
 
     for ( int i = 0; i < data.size(); i++){
@@ -63,6 +84,7 @@ void normData( std::vector<Planet> &data){
         data[i].pAttr.orbitSpeed = data[i].pAttr.orbitSpeed / sum_speed;
         data[i].pAttr.rotationPeriod = data[i].pAttr.rotationPeriod / sum_per;
     }
+
 }
 
 void configRead( std::vector<Planet> &setting, fstream &fin ){

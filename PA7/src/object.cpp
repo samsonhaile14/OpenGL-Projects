@@ -100,10 +100,18 @@ void Object::init( Sphere setting )
 
   //rescale attributes to be suitable for display
 
-  specs.diameter *= 8.0f;
-  specs.orbitRadius *= 100.0f;
-  specs.orbitSpeed *= 5.0f;
+
+
+  specs.diameter *= 20.0f;
+  specs.orbitRadius *= 1000.0f;
+
+   //convert linear speed to rotational speed
+   if( specs.orbitSpeed != 0 ){
+     specs.orbitSpeed = (specs.orbitSpeed * 100.0) / (2.0 * (M_PI) * specs.orbitRadius)  ;
+     }
+
   specs.rotationPeriod *= 103.0f;
+
 
 
   glGenBuffers(1, &VB);
@@ -143,7 +151,7 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   distX = specs.orbitRadius * glm::cos(orbitAngle);
 
   distZ = specs.orbitRadius * glm::sin(orbitAngle);
-   
+
   //return cube back to origin
   float ratio = specs.diameter;
 
@@ -151,20 +159,22 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   if( ratio < 1.0f )
     ratio = 1.0f;
 
-  model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
-
-//  model = glm::scale( glm::mat4(1.0f), glm::vec3(ratio, ratio, ratio) );
 
 
-  model = glm::translate(model, glm::vec3(0.0,0.0,0.0));
+ // model = glm::translate(glm::mat4(1.0), glm::vec3(0.0,0.0,0.0));
+
 
   //move cube to location specified distX and distZ
-  model = glm::translate(model, glm::vec3(distX,0.0,distZ));
-
-  //rotate cube
-  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+  model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
 
 //  model = glm::rotate( model, -90.0f, glm::vec3(0.0, 0.0, 1.0));
+
+  model = glm::scale( model, glm::vec3(ratio, ratio, ratio) );
+
+  //rotate cube
+  //model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+
+
 }
 glm::mat4 Object::GetModel()
 {
