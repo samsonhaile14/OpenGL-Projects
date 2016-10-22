@@ -138,7 +138,10 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   if( !pause ){
     if( glm::abs(movement[0]) < 2.0f )
     {
-      rotAngle += ( (float)(dt) / 1000.0f ) * (M_PI) * movement[0] * (1.0f / specs.rotationPeriod);
+
+      if( specs.rotationPeriod != 0 ){
+         rotAngle += ( (float)(dt) / 1000.0f ) * (M_PI) * movement[0] * (1.0f / specs.rotationPeriod);
+         }
     }
 
     if( glm::abs(movement[1]) < 2.0f )
