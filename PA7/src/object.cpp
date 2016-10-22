@@ -172,7 +172,7 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   model = glm::scale( model, glm::vec3(ratio, ratio, ratio) );
 
   //rotate cube
-  //model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
 
 
 }
