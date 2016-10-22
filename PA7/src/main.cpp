@@ -60,6 +60,11 @@ void normData( std::vector<Planet> &data){
         sum_speed += data[i].pAttr.orbitSpeed;
         sum_per += data[i].pAttr.rotationPeriod;
 
+        mSum_dia = 0;
+        mSum_rad = 0;
+        mSum_speed = 0;
+        mSum_per = 0;
+
        for ( int j = 0; j < data[i].moons.size(); j++){
            mSum_dia += data[i].moons[j].diameter;
            mSum_rad += data[i].moons[j].orbitRadius;
@@ -67,23 +72,37 @@ void normData( std::vector<Planet> &data){
            mSum_per += data[i].moons[j].rotationPeriod;
 
        }
-
+cout << mSum_dia << ' ' << mSum_rad << ' ' << mSum_speed << ' ' << mSum_per << endl;
        for ( int j = 0; j < data[i].moons.size(); j++){
-           data[i].moons[j].diameter /= mSum_dia * 100.0;
-           data[i].moons[j].orbitRadius /= mSum_rad * 100.0;
-           data[i].moons[j].orbitSpeed /= mSum_speed * 100.0;
-           data[i].moons[j].rotationPeriod /= mSum_per * 100.0;
+
+           if( mSum_dia != 0 )
+              data[i].moons[j].diameter /= mSum_dia * 10.0;
+
+           if( mSum_rad != 0 )            
+            data[i].moons[j].orbitRadius /= mSum_rad * 10.0;
+
+           if( mSum_speed != 0 )
+              data[i].moons[j].orbitSpeed /= mSum_speed * 10.0;
+
+           if( mSum_per != 0 )
+              data[i].moons[j].rotationPeriod /= mSum_per * 10.0;
 
        } 
 
     }
 
     for ( int i = 0; i < data.size(); i++){
-        data[i].pAttr.diameter = data[i].pAttr.diameter / sum_dia;
-        data[i].pAttr.orbitRadius = data[i].pAttr.orbitRadius / sum_rad;
-        data[i].pAttr.orbitSpeed = data[i].pAttr.orbitSpeed / sum_speed;
-        data[i].pAttr.rotationPeriod = data[i].pAttr.rotationPeriod / sum_per;
-    }
+           if( sum_dia != 0 )
+              data[i].pAttr.diameter /= sum_dia;
+
+           if( sum_rad != 0 )            
+            data[i].pAttr.orbitRadius /= sum_rad;
+
+           if( sum_speed != 0 )
+              data[i].pAttr.orbitSpeed /= sum_speed;
+
+           if( sum_per != 0 )
+              data[i].pAttr.rotationPeriod /= sum_per;    }
 
 }
 
