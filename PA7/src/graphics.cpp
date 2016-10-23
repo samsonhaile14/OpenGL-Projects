@@ -66,6 +66,20 @@ bool Graphics::Initialize(int width, int height)
 
      }
 
+     if( setting[indx].pAttr.hasRing ){
+         Sphere ring = setting[indx].pAttr;
+         ring.diameter *= 0.2;
+         ring.hasRing = false;
+         ring.orbitRadius = 0;
+         ring.orbitSpeed = 0;
+         ring.rotationPeriod = 0;
+
+         Object subTemp( ring, "../objects/ring.obj", 
+                         "../textures/" + setting[indx].pAttr.textureFile );
+
+         subObjs.push_back( subTemp );
+     }
+
 
      pObjs.push_back( temp );
      mObjs.push_back( subObjs );

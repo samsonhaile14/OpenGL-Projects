@@ -72,7 +72,7 @@ void normData( std::vector<Planet> &data){
            mSum_per += data[i].moons[j].rotationPeriod;
 
        }
-cout << mSum_dia << ' ' << mSum_rad << ' ' << mSum_speed << ' ' << mSum_per << endl;
+
        for ( int j = 0; j < data[i].moons.size(); j++){
 
            if( mSum_dia != 0 )
@@ -185,6 +185,15 @@ std::string readSphere( Sphere &obj, fstream &fin ){
 
    fin >> str;
    obj.textureFile = str;
+
+   fin >> str;
+   if( str == "YES" ){
+      obj.hasRing = true;
+   }
+
+   else{
+      obj.hasRing = false;
+   }
 
    fin >> str; //read next type designation
    return str;

@@ -112,8 +112,6 @@ void Object::init( Sphere setting )
 
   specs.rotationPeriod *= 103.0f;
 
-
-
   glGenBuffers(1, &VB);
   glBindBuffer(GL_ARRAY_BUFFER, VB);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
@@ -168,15 +166,17 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
 
 
   //move cube to location specified distX and distZ
-  model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
-
+  if( specs.orbitRadius == 0 ){
+     model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
+  }
 //  model = glm::rotate( model, -90.0f, glm::vec3(0.0, 0.0, 1.0));
 
   model = glm::scale( model, glm::vec3(ratio, ratio, ratio) );
 
   //rotate cube
-  model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
-
+  if( specs.rotationPeriod != 0 ){
+     model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
+  }
 
 }
 glm::mat4 Object::GetModel()

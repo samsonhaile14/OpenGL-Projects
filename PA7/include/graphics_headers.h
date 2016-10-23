@@ -33,10 +33,8 @@ float diameter;
 float orbitRadius;
 float orbitSpeed;
 float rotationPeriod;
-float n_diameter;
-float n_orbitRadius;
-float n_orbitSpeed;
-float n_rotationPeriod;
+
+bool hasRing;
 
 };
 
