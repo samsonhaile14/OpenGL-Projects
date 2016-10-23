@@ -76,16 +76,16 @@ cout << mSum_dia << ' ' << mSum_rad << ' ' << mSum_speed << ' ' << mSum_per << e
        for ( int j = 0; j < data[i].moons.size(); j++){
 
            if( mSum_dia != 0 )
-              data[i].moons[j].diameter /= mSum_dia * 10.0;
+              data[i].moons[j].diameter /= sum_dia * 10.0;
 
            if( mSum_rad != 0 )            
-            data[i].moons[j].orbitRadius /= mSum_rad * 10.0;
+            data[i].moons[j].orbitRadius /= sum_rad * 10.0;
 
            if( mSum_speed != 0 )
-              data[i].moons[j].orbitSpeed /= mSum_speed * 10.0;
+              data[i].moons[j].orbitSpeed /= sum_speed * 10.0;
 
            if( mSum_per != 0 )
-              data[i].moons[j].rotationPeriod /= mSum_per * 10.0;
+              data[i].moons[j].rotationPeriod /= sum_per * 10.0;
 
        } 
 
