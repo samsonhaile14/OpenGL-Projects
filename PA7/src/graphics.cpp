@@ -50,7 +50,6 @@ bool Graphics::Initialize(int width, int height)
   int indx;
   int mIndx;
 
-  //setting[0].pAttr.diameter = 0.01f;
   for( indx = 0; indx < setting.size(); indx++ ){
 
      vector< Object > subObjs;
@@ -169,7 +168,7 @@ void Graphics::Update(unsigned int dt, float movement[], bool pause)
 void Graphics::Render()
 {
   //clear the screen
-  glClearColor(0.0, 0.0, 0.2, 1.0);
+  glClearColor(0.0, 0.0, 0.0, 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Start the correct program

@@ -102,7 +102,7 @@ void Object::init( Sphere setting )
 
 
 
-  specs.diameter *= 10.0f;
+  specs.diameter *= 20.0f;
   specs.orbitRadius *= 1000.0f;
 
    //convert linear speed to rotational speed
