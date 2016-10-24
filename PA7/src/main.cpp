@@ -96,7 +96,8 @@ void normData( std::vector<Planet> &data){
               data[i].pAttr.orbitSpeed /= sum_speed;
 
            if( sum_per != 0 )
-              data[i].pAttr.rotationPeriod /= sum_per;    }
+              data[i].pAttr.rotationPeriod /= sum_per;
+    }
 
 }
 

@@ -102,11 +102,11 @@ void Object::init( Sphere setting )
 
 
 
-  specs.diameter *= 20.0f;
+  specs.diameter *= 10.0f;
   specs.orbitRadius *= 1000.0f;
 
    //convert linear speed to rotational speed
-   if( specs.orbitSpeed != 0 ){
+   if( specs.orbitSpeed != 0 && specs.orbitRadius != 0 ){
      specs.orbitSpeed = (specs.orbitSpeed * 100.0) / (2.0 * (M_PI) * specs.orbitRadius)  ;
      }
 
@@ -157,19 +157,8 @@ void Object::Update(unsigned int dt, float movement[], bool pause)
   float ratio = specs.diameter;
 
 
-  if( ratio < 1.0f )
-    ratio = 1.0f;
-
-
-
- // model = glm::translate(glm::mat4(1.0), glm::vec3(0.0,0.0,0.0));
-
-
   //move cube to location specified distX and distZ
-  if( specs.orbitRadius == 0 ){
-     model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
-  }
-//  model = glm::rotate( model, -90.0f, glm::vec3(0.0, 0.0, 1.0));
+  model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
 
   model = glm::scale( model, glm::vec3(ratio, ratio, ratio) );
 
