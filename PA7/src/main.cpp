@@ -75,7 +75,7 @@ void normData( std::vector<Planet> &data){
               data[i].moons[j].diameter /= sum_dia;
 
            if( sum_rad != 0 )            
-            data[i].moons[j].orbitRadius /= sum_rad;
+            data[i].moons[j].orbitRadius /= sum_rad / 20.0; //scaled for visibility
 
            if( sum_speed != 0 )
               data[i].moons[j].orbitSpeed /= sum_speed;
