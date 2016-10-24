@@ -22,7 +22,7 @@ class Object
                       std::vector< std::string > colorNames );
 
     ~Object();
-    void Update(unsigned int dt, float movement[], bool pause);
+    void Update(unsigned int dt, float timeScale, float movement[], bool pause);
     void Render(GLint gSampler);
 
     void Bind(GLenum TextureUnit, int texIndx);

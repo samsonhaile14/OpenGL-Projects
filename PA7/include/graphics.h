@@ -15,7 +15,7 @@ class Graphics
     Graphics(std::vector< Planet > solSys);
     ~Graphics();
     bool Initialize(int width, int height);
-    void Update(unsigned int dt, float movement[], bool pause);
+    void Update(unsigned int dt, float timeScale, float movement[], bool pause);
     void Render();
     void UpdateCamera(glm::vec3);
     void goToPlanet(int);

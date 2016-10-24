@@ -38,6 +38,7 @@ class Engine
 
 
     unsigned int m_DT;
+    float timeScale = 1;
     long long m_currentTimeMillis;
     bool m_running;
 

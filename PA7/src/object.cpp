@@ -99,18 +99,18 @@ void Object::init( Sphere setting )
   specs = setting;
 
   //rescale attributes to be suitable for display
+  //multipliers in parentheses are scale factors for visibility
 
 
-
-  specs.diameter *= 20.0f;
-  specs.orbitRadius *= 1000.0f;
+  specs.diameter *= (30.0f);
+  specs.orbitRadius *= 1000000.0 / (250.0); //multiplied by 1000 to make up for 10^6 difference in config file
 
    //convert linear speed to rotational speed
    if( specs.orbitSpeed != 0 && specs.orbitRadius != 0 ){
-     specs.orbitSpeed = (specs.orbitSpeed * 100.0) / (2.0 * (M_PI) * specs.orbitRadius)  ;
+     specs.orbitSpeed = (specs.orbitSpeed) / (2.0 * (M_PI) * specs.orbitRadius); //user scalable
      }
 
-  specs.rotationPeriod *= 103.0f;
+  //specs.rotationPeriod is user scalable
 
   glGenBuffers(1, &VB);
   glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -129,22 +129,22 @@ Object::~Object()
   Indices.clear();
 }
 
-void Object::Update(unsigned int dt, float movement[], bool pause)
+void Object::Update(unsigned int dt, float timeScale, float movement[], bool pause)
 {
-  
+
   //module for orbit and rotation response to controls
   if( !pause ){
     if( glm::abs(movement[0]) < 2.0f )
     {
 
       if( specs.rotationPeriod != 0 ){
-         rotAngle += ( (float)(dt) / 1000.0f ) * (M_PI) * movement[0] * (1.0f / specs.rotationPeriod);
+         rotAngle += ( (float)(dt) / 1000.0f ) * (M_PI) * movement[0] * (timeScale/ (specs.rotationPeriod * 86400.0) );
          }
     }
 
     if( glm::abs(movement[1]) < 2.0f )
     {
-      orbitAngle += ( ((float) (dt)) / 1000.0f ) * (M_PI) * movement[1] * specs.orbitSpeed;
+      orbitAngle += ( ((float) (dt)) / 1000.0f ) * (M_PI) * movement[1] * timeScale * specs.orbitSpeed;
     }
   }
 

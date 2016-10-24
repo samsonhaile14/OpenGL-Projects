@@ -75,7 +75,7 @@ void Engine::Run()
     else
       m_graphics->resetCamera();
 
-    m_graphics->Update(m_DT, movement, pause);
+    m_graphics->Update(m_DT, timeScale, movement, pause);
     m_graphics->Render();
 
     // Swap to the Window
@@ -196,6 +196,26 @@ void Engine::Keyboard()
     else if (m_event.key.keysym.sym == SDLK_0)
     {
       planetLock = -1;
+    }
+
+    //controls for speeding up/slowing down time
+    else if (m_event.key.keysym.sym == SDLK_EQUALS)
+    {
+      timeScale *= 2.0;
+
+      printf( "Speed now at %f scale\n", timeScale );
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_MINUS )
+    {
+
+      if( timeScale > 1.0 ){
+         timeScale /= 2.0;
+
+         printf( "Speed now at %f scale\n", timeScale );
+      }
+
+
     }
 
   }

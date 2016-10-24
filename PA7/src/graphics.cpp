@@ -147,7 +147,7 @@ bool Graphics::Initialize(int width, int height)
   return true;
 }
 
-void Graphics::Update(unsigned int dt, float movement[], bool pause)
+void Graphics::Update(unsigned int dt, float timeScale, float movement[], bool pause)
 {
 
    int indx;
@@ -155,10 +155,10 @@ void Graphics::Update(unsigned int dt, float movement[], bool pause)
 
    for( indx = 0; indx < pObjs.size(); indx++ ){
 
-      pObjs[indx].Update( dt, movement, pause);
+      pObjs[indx].Update( dt, timeScale, movement, pause);
 
       for( mIndx = 0; mIndx < mObjs[indx].size(); mIndx++ ){
-         mObjs[indx][mIndx].Update(dt,movement,pause);
+         mObjs[indx][mIndx].Update(dt, timeScale, movement, pause);
       }
 
    }
