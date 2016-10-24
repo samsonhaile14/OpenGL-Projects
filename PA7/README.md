@@ -30,6 +30,7 @@ Keyboard Controls:
 8: toggle camera lock to Uranus
 9: toggle camera lock to Neptune
 q: toggle camera lock to Pluto
+z: toggle zoom on planet (disables on default camera view)
 r: reverse rotation of object 
 t: pause/resume rotation of object
 o: reverse orbit of object
