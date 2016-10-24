@@ -1,4 +1,4 @@
-PA6 Run instructions
+PA7 Run instructions
 
 Follow the following instructions to compile and run the code:
 
@@ -14,7 +14,24 @@ make
 
 Instructions for executing
 ```
-./Tutorial sphere
+./Tutorial
 ```
 
-Keys 1-9 toggle camera locations to various planets. Key 0 gives a zoomed out look at the solar system.
+
+Keyboard Controls: 
+0: default camera view
+1: toogle camera lock to Sun
+2: toggle camera lock to Mercury
+3: toggle camera lock to Venus
+4: toggle camera lock to Earth
+5: toggle camera lock to Mars
+6: toggle camera lock to Jupiter
+7: toggle camera lock to Saturn
+8: toggle camera lock to Uranus
+9: toggle camera lock to Neptune
+q: toggle camera lock to Pluto
+r: reverse rotation of object 
+t: pause/resume rotation of object
+o: reverse orbit of object
+p: pause/resume rotation of object
+mouse click: pause all motion

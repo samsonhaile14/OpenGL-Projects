@@ -12,7 +12,7 @@ class Engine
   public:
     Engine(string name, int width, int height, 
            std::vector< Planet > setting );
-    Engine(string name);
+    Engine(string name, std::vector< Planet > setting );
     ~Engine();
     bool Initialize();
     void Run();

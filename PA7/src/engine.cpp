@@ -11,12 +11,13 @@ Engine::Engine(string name, int width, int height,
   solSys = setting;
 }
 
-Engine::Engine(string name)
+Engine::Engine(string name, std::vector< Planet > setting)
 {
   m_WINDOW_NAME = name;
   m_WINDOW_HEIGHT = 0;
   m_WINDOW_WIDTH = 0;
   m_FULLSCREEN = true;
+  solSys = setting;
 }
 
 Engine::~Engine()
