@@ -129,7 +129,7 @@ Object::~Object()
   Indices.clear();
 }
 
-void Object::Update(unsigned int dt, float timeScale, float movement[], bool pause)
+void Object::Update(unsigned int dt, float timeScale, float movement[], bool pause, bool isZoomToggled, float zf)
 {
 
   //module for orbit and rotation response to controls
@@ -158,11 +158,14 @@ void Object::Update(unsigned int dt, float timeScale, float movement[], bool pau
 
 
   //move cube to location specified distX and distZ
+  if( isZoomToggled )
+  model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ + zf ));
+  else
   model = glm::translate(glm::mat4(1.0), glm::vec3(distX,0.0,distZ));
-
   model = glm::scale( model, glm::vec3(ratio, ratio, ratio) );
 
   //rotate cube
+  model = glm::rotate( model, 3.1f, glm::vec3(1.0, 0.0, 0.0));
   if( specs.rotationPeriod != 0 ){
      model = glm::rotate( model, (rotAngle), glm::vec3(0.0, 1.0, 0.0));
   }
@@ -210,4 +213,8 @@ void Object::Bind(GLenum TextureUnit, int texIndx){
 // function: obtain position of center of the object
 glm::vec3 Object::getPosition(){
    return glm::vec3(distX, distY, distZ);
+}
+
+float Object::getZoomFactor(){
+  return specs.zoomFactor;
 }

@@ -147,7 +147,7 @@ bool Graphics::Initialize(int width, int height)
   return true;
 }
 
-void Graphics::Update(unsigned int dt, float timeScale, float movement[], bool pause)
+void Graphics::Update(unsigned int dt, float timeScale, float movement[], bool pause, bool isZoomToggled, float zoomFactor)
 {
 
    int indx;
@@ -155,10 +155,10 @@ void Graphics::Update(unsigned int dt, float timeScale, float movement[], bool p
 
    for( indx = 0; indx < pObjs.size(); indx++ ){
 
-      pObjs[indx].Update( dt, timeScale, movement, pause);
+      pObjs[indx].Update( dt, timeScale, movement, pause, isZoomToggled, zoomFactor);
 
       for( mIndx = 0; mIndx < mObjs[indx].size(); mIndx++ ){
-         mObjs[indx][mIndx].Update(dt, timeScale, movement, pause);
+         mObjs[indx][mIndx].Update(dt, timeScale, movement, pause, false, zoomFactor);
       }
 
    }
@@ -255,4 +255,8 @@ void Graphics::goToPlanet(int planetIndex){
 // function: move camera to top down view of solar system
 void Graphics::resetCamera(){
     m_camera->Update(glm::vec3(-200.0,300.0,-350.0));
+}
+
+float Graphics::getZoomFactor(int planetIndex){
+    return pObjs[planetIndex].getZoomFactor();
 }

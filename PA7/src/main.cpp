@@ -190,6 +190,9 @@ std::string readSphere( Sphere &obj, fstream &fin ){
       obj.hasRing = false;
    }
 
+   fin >> val;
+   obj.zoomFactor = val;
+
    fin >> str; //read next type designation
    return str;
 

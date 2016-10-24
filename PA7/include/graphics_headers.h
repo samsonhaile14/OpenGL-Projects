@@ -33,6 +33,7 @@ float diameter;
 float orbitRadius;
 float orbitSpeed;
 float rotationPeriod;
+float zoomFactor;
 
 bool hasRing;
 

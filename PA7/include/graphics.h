@@ -15,11 +15,12 @@ class Graphics
     Graphics(std::vector< Planet > solSys);
     ~Graphics();
     bool Initialize(int width, int height);
-    void Update(unsigned int dt, float timeScale, float movement[], bool pause);
+    void Update(unsigned int dt, float timeScale, float movement[], bool pause, bool isZoomToggled, float zoomFactor);
     void Render();
     void UpdateCamera(glm::vec3);
     void goToPlanet(int);
     void resetCamera();
+    float getZoomFactor(int planetIndex);
 
   private:
     std::string ErrorString(GLenum error);

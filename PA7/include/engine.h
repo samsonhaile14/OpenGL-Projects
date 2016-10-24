@@ -43,6 +43,8 @@ class Engine
     bool m_running;
 
     int planetLock = -1;
+    bool isZoomToggled = false;
+    float zoomFactor = 0.0f;
 };
 
 #endif // ENGINE_H
