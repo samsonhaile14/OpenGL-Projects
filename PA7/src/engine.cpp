@@ -70,7 +70,7 @@ void Engine::Run()
     // Update and render the graphics
 
       // lock onto planet if index given
-    if(planetLock >= 0 && planetLock < 9)
+    if(planetLock >= 0 && planetLock <= 9)
       m_graphics->goToPlanet(planetLock);
     else
       m_graphics->resetCamera();
@@ -191,6 +191,11 @@ void Engine::Keyboard()
     else if (m_event.key.keysym.sym == SDLK_9)
     {
       planetLock = 8;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_q)
+    {
+      planetLock = 9;
     }
 
     else if (m_event.key.keysym.sym == SDLK_0)
