@@ -46,13 +46,9 @@ int main(int argc, char **argv)
 
 void normData( std::vector<Planet> &data){
     float sum_dia = 0;
-    float mSum_dia = 0;
     float sum_rad = 0;
-    float mSum_rad = 0;
     float sum_speed = 0;
-    float mSum_speed = 0;
     float sum_per = 0;
-    float mSum_per = 0;
 
     for ( int i = 0; i < data.size(); i++){
         sum_dia += data[i].pAttr.diameter;
@@ -60,38 +56,36 @@ void normData( std::vector<Planet> &data){
         sum_speed += data[i].pAttr.orbitSpeed;
         sum_per += data[i].pAttr.rotationPeriod;
 
-        mSum_dia = 0;
-        mSum_rad = 0;
-        mSum_speed = 0;
-        mSum_per = 0;
-
        for ( int j = 0; j < data[i].moons.size(); j++){
-           mSum_dia += data[i].moons[j].diameter;
-           mSum_rad += data[i].moons[j].orbitRadius;
-           mSum_speed += data[i].moons[j].orbitSpeed;
-           mSum_per += data[i].moons[j].rotationPeriod;
+           sum_dia += data[i].moons[j].diameter;
+           sum_rad += data[i].moons[j].orbitRadius;
+           sum_speed += data[i].moons[j].orbitSpeed;
+           sum_per += data[i].moons[j].rotationPeriod;
 
        }
-
-       for ( int j = 0; j < data[i].moons.size(); j++){
-
-           if( mSum_dia != 0 )
-              data[i].moons[j].diameter /= sum_dia * 10.0;
-
-           if( mSum_rad != 0 )            
-            data[i].moons[j].orbitRadius /= sum_rad * 10.0;
-
-           if( mSum_speed != 0 )
-              data[i].moons[j].orbitSpeed /= sum_speed * 10.0;
-
-           if( mSum_per != 0 )
-              data[i].moons[j].rotationPeriod /= sum_per * 10.0;
-
-       } 
 
     }
 
     for ( int i = 0; i < data.size(); i++){
+
+
+       for ( int j = 0; j < data[i].moons.size(); j++){
+
+           if( sum_dia != 0 )
+              data[i].moons[j].diameter /= sum_dia;
+
+           if( sum_rad != 0 )            
+            data[i].moons[j].orbitRadius /= sum_rad;
+
+           if( sum_speed != 0 )
+              data[i].moons[j].orbitSpeed /= sum_speed;
+
+           if( sum_per != 0 )
+              data[i].moons[j].rotationPeriod /= sum_per;
+
+       } 
+
+
            if( sum_dia != 0 )
               data[i].pAttr.diameter /= sum_dia;
 
