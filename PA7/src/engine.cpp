@@ -11,12 +11,13 @@ Engine::Engine(string name, int width, int height,
   solSys = setting;
 }
 
-Engine::Engine(string name)
+Engine::Engine(string name, std::vector< Planet > setting)
 {
   m_WINDOW_NAME = name;
   m_WINDOW_HEIGHT = 0;
   m_WINDOW_WIDTH = 0;
   m_FULLSCREEN = true;
+  solSys = setting;
 }
 
 Engine::~Engine()
@@ -70,12 +71,17 @@ void Engine::Run()
     // Update and render the graphics
 
       // lock onto planet if index given
-    if(planetLock >= 0 && planetLock <= 9)
+    if(planetLock >= 0 && planetLock <= 9){
+      zoomFactor = m_graphics->getZoomFactor(planetLock);
       m_graphics->goToPlanet(planetLock);
-    else
+    }
+      
+    else{
       m_graphics->resetCamera();
+      isZoomToggled = false;
+    }
 
-    m_graphics->Update(m_DT, timeScale, movement, pause);
+    m_graphics->Update(m_DT, timeScale, movement, pause, isZoomToggled, zoomFactor);
     m_graphics->Render();
 
     // Swap to the Window
@@ -201,6 +207,11 @@ void Engine::Keyboard()
     else if (m_event.key.keysym.sym == SDLK_0)
     {
       planetLock = -1;
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_z)
+    {
+      isZoomToggled ^= 1;
     }
 
     //controls for speeding up/slowing down time

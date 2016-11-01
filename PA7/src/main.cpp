@@ -30,7 +30,7 @@ int main(int argc, char **argv)
       fin.close();
 
   // Start an engine and run it then cleanup after
-  Engine *engine = new Engine("Tutorial Window Name", 800, 600, setting);
+  Engine *engine = new Engine("Solar System", setting);
   if(!engine->Initialize())
   {
     printf("The engine failed to start.\n");
@@ -189,6 +189,9 @@ std::string readSphere( Sphere &obj, fstream &fin ){
    else{
       obj.hasRing = false;
    }
+
+   fin >> val;
+   obj.zoomFactor = val;
 
    fin >> str; //read next type designation
    return str;

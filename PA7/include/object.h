@@ -22,7 +22,7 @@ class Object
                       std::vector< std::string > colorNames );
 
     ~Object();
-    void Update(unsigned int dt, float timeScale, float movement[], bool pause);
+    void Update(unsigned int dt, float timeScale, float movement[], bool pause, bool isZoomToggled, float zf);
     void Render(GLint gSampler);
 
     void Bind(GLenum TextureUnit, int texIndx);
@@ -30,6 +30,8 @@ class Object
     glm::mat4 GetModel();
 
     glm::vec3 getPosition();
+
+    float getZoomFactor();
 
   private:
     glm::mat4 model;

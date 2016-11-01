@@ -12,7 +12,7 @@ class Engine
   public:
     Engine(string name, int width, int height, 
            std::vector< Planet > setting );
-    Engine(string name);
+    Engine(string name, std::vector< Planet > setting );
     ~Engine();
     bool Initialize();
     void Run();
@@ -43,6 +43,8 @@ class Engine
     bool m_running;
 
     int planetLock = -1;
+    bool isZoomToggled = false;
+    float zoomFactor = 0.0f;
 };
 
 #endif // ENGINE_H
