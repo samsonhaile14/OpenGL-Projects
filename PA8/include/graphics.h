@@ -15,7 +15,7 @@ class Graphics
     Graphics(std::vector< std::string > graphicFiles);
     ~Graphics();
     bool Initialize(int width, int height);
-    void Update(unsigned int dt, float movement[], bool pause);
+    void Update(unsigned int dt, float movement[]);
     void Render();
 
   private:
@@ -32,8 +32,21 @@ class Graphics
 
     GLint gSampler;
 
-    Object *m_BObj;
+    Object *rWall;
+    Object *lWall;
+    Object *tWall;
+    Object *cylinder;
+    Object *ground;
+    Object *ball;
+    Object *cube;
 
+    //collision variables
+    btBroadphaseInterface *broadphase;
+    btDefaultCollisionConfiguration *collisionConfiguration;
+    btCollisionDispatcher *dispatcher;
+    btSequentialImpulseConstraintSolver *solver;
+    btDiscreteDynamicsWorld *dynamicsWorld;
+    
 
     bool clockwise = true;
 };

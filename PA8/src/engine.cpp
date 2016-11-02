@@ -68,7 +68,7 @@ void Engine::Run()
     }
 
     // Update and render the graphics
-    m_graphics->Update(m_DT, movement, pause);
+    m_graphics->Update(m_DT, movement);
     m_graphics->Render();
 
     // Swap to the Window
@@ -94,53 +94,28 @@ void Engine::Keyboard()
     }
 
     // Handle key event for reversing rotation
-    else if (m_event.key.keysym.sym == SDLK_r)
+    else if (m_event.key.keysym.sym == SDLK_RIGHT)
     {
-      movement[0] *= -1.0;
+      movement[0] = -1.0;
     }
 
-    // Handle key event for reversing orbit
-    else if (m_event.key.keysym.sym == SDLK_o ||
-             (m_event.key.keysym.sym == SDLK_LEFT && movement[1] > 0) ||
-             (m_event.key.keysym.sym == SDLK_RIGHT && movement[1] < 0))
+    else if (m_event.key.keysym.sym == SDLK_LEFT)
     {
-      movement[1] *= -1.0;
+      movement[0] = 1.0;
     }
 
-    // Handle key event for stopping/resuming rotation
-    else if (m_event.key.keysym.sym == SDLK_t)
+    else if (m_event.key.keysym.sym == SDLK_DOWN)
     {
-      if((movement[0] == 1) || (movement[0] == -1))
-      {
-        movement[0] += movement[0];
-      }
-
-      else
-      {
-        movement[0] -= movement[0]/2.0f;
-      } 
+      movement[0] = 0.0;
+      movement[1] = 0.0;
     }
 
-    // Handle key event for stopping/resuming orbit
-    else if (m_event.key.keysym.sym == SDLK_p)
+    else if (m_event.key.keysym.sym == SDLK_UP)
     {
-      if( (movement[1] == 1.0f) || (movement[1] == -1.0f))
-      {
-        movement[1] += movement[1];
-      }
-
-      else
-      {
-        movement[1] -= movement[1]/2.0f;
-      }
+      movement[1] = 1.0;
     }
 
-  }
 
-  // Handle mouse event to pause everything
-  else if(m_event.type == SDL_MOUSEBUTTONDOWN)
-  {
-  pause = !pause;
   }
 
 }

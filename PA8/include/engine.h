@@ -32,7 +32,7 @@ class Engine
 
     Graphics *m_graphics;
 
-    float movement[2] = {1.0f,1.0f}; //index 0 = rotation, index 1 = orbit
+    float movement[2] = {0.0f,0.0f}; 
     bool pause = false; 
 
 

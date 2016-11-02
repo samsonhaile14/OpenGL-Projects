@@ -18,9 +18,8 @@
 class Object
 {
   public:
-    Object(float oRadius, float oSpeed);
-    Object(float oRadius, float oSpeed, std::string objPath);
-    void init( float oRadius, float oSpeed );
+    Object(float x, float y, float z,float rx, float ry, float rz,float m_mass,int meshType, std::string objPath);
+    void init(float m_mass,int meshType);
     int loadObj( std::string fName, std::vector< glm::vec3 > colorList,
                       std::vector< std::string > colorNames );
 
@@ -31,9 +30,21 @@ class Object
     void Bind(GLenum TextureUnit, int texIndx);
 
     glm::mat4 GetModel();
+    
+    glm::vec3 globalPos;
+    glm::vec3 globalRot;
+    glm::vec3 globalScale;
+
+    btTriangleMesh *objTriMesh;
+    btCollisionShape *shape;
+    btDefaultMotionState *shapeMotionState;
+    btScalar mass;
+    btVector3 inertia;
+    btRigidBody *rigidBody;
+    glm::mat4 model;
 
   private:
-    glm::mat4 model;
+
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
     std::vector<int> indicesStart;
@@ -45,10 +56,6 @@ class Object
     std::vector< Magick::Blob > blobs;
     std::vector< GLuint > texObjs;
 
-    float orbitAngle;
-    float rotAngle;
-    float orbitRadius;
-    float orbitSpeed;
 };
 
 #endif /* OBJECT_H */

@@ -1,5 +1,14 @@
 #include "graphics.h"
 
+#define BIT(x) (1<<(x))
+
+enum collisionTypes{
+
+   COL_NOTHING = 0,
+   COL_WALL = BIT(1),
+   COL_BALL = BIT(2)
+};
+
 Graphics::Graphics(std::vector< std::string > graphicFiles )
 {
 
@@ -10,6 +19,15 @@ oFiles = graphicFiles;
 Graphics::~Graphics()
 {
 
+  delete collisionConfiguration;
+  delete dispatcher;
+  delete solver;
+  delete dynamicsWorld;
+
+  collisionConfiguration = NULL;
+  dispatcher = NULL;
+  solver = NULL;
+  dynamicsWorld = NULL;
 }
 
 bool Graphics::Initialize(int width, int height)
@@ -46,15 +64,68 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-  // Create the object
-  
-  if( oFiles.size() == 0 ){
-   m_BObj = new Object(0.0f, 0.0f, "../objects/box.obj" );
-  }
+  // Create the objects
+   rWall = new Object(-5.5,1.5,0.0, //position
+                      0.0,0.0,0.0 , //rotation
+                     0.0, 0,"../objects/wall.obj");   //mass,meshtype,objfile
 
-  else{
-   m_BObj = new Object(0.0f, 0.0f, "../objects/" + oFiles[0]); 
-  }
+   lWall = new Object(5.5,1.5,0.0,
+                      0.0,0.0,0.0 ,
+                      0.0, 0,"../objects/wall.obj");
+
+   tWall = new Object(0.0,1.5,9.5, 
+                      0.0, (2.0 * 3.141592) / 4.0, 0.0,
+                      0.0,0, "../objects/wall.obj");
+
+   cylinder = new Object( 0.0,1.5,6.5,
+                          0.0,0.0,0.0,
+                          0.0,2,"../objects/cylinder.obj" );
+
+   ground = new Object(0.0f,0.0f,0.0,
+                       0.0,0.0,0.0 ,
+                       0.0,0, "../objects/floor.obj");
+
+   cube = new Object(0.0f,1.5f,-8.5,
+                       0.0,0.0,0.0 ,
+                       1.0,3, "../objects/cube.obj");
+
+   ball = new Object(0.0f,5.0f,4.0,
+                     0.0,0.0,0.0,
+                     1.0, 1,"../objects/sphere.obj");
+
+  // Create collider environment
+  broadphase = new btDbvtBroadphase();
+  collisionConfiguration = new btDefaultCollisionConfiguration();
+  dispatcher = new btCollisionDispatcher(collisionConfiguration);
+  solver = new btSequentialImpulseConstraintSolver();
+  dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, 
+                                              collisionConfiguration);
+
+  dynamicsWorld->setGravity(btVector3(0.0,-9.81,-0.1));
+
+  //Set kinematic/static rigidbodies and add rigidbodies to dynamicWorld
+
+  int ballCollide = COL_WALL;
+
+  dynamicsWorld->addRigidBody(rWall->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(lWall->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(tWall->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(cylinder->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(ground->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(ball->rigidBody,COL_BALL, ballCollide);
+  dynamicsWorld->addRigidBody(cube->rigidBody,COL_WALL, COL_BALL);
+
+  rWall->rigidBody->setCollisionFlags(rWall->rigidBody->getCollisionFlags() |
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  lWall->rigidBody->setCollisionFlags(lWall->rigidBody->getCollisionFlags() |
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  tWall->rigidBody->setCollisionFlags(tWall->rigidBody->getCollisionFlags() | 
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  ground->rigidBody->setCollisionFlags(ground->rigidBody->getCollisionFlags() | 
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  cube->rigidBody->setCollisionFlags(cube->rigidBody->getCollisionFlags() | 
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+
 
   // Set up the shaders
   m_shader = new Shader();
@@ -118,10 +189,43 @@ bool Graphics::Initialize(int width, int height)
   return true;
 }
 
-void Graphics::Update(unsigned int dt, float movement[], bool pause)
+void Graphics::Update(unsigned int dt, float movement[])
 {
 
-m_BObj->Update( dt, movement, pause);
+dynamicsWorld->stepSimulation(dt,10);
+
+if( movement[0] != 0 || movement[1] == 1 ){
+   btTransform trans;
+   cube->rigidBody->getMotionState()->getWorldTransform(trans);
+   
+
+   trans.setOrigin( btVector3( movement[0],1.5,-7.5 ) );
+
+   cube->rigidBody->getMotionState()->setWorldTransform( trans );
+
+}
+
+else if( movement[0] == 0 ){
+   btTransform trans;
+   cube->rigidBody->getMotionState()->getWorldTransform(trans);
+   
+
+   trans.setOrigin( btVector3( 0.0,1.5,-8.5 ) );
+
+   cube->rigidBody->getMotionState()->setWorldTransform( trans );
+
+}
+
+
+rWall->Update( dt, movement, false);
+lWall->Update( dt, movement, false);
+tWall->Update( dt, movement, false);
+cylinder->Update( dt,movement,false);
+ground->Update( dt, movement, false);
+
+ball->Update(dt,movement,false);
+cube->Update(dt,movement,false);
+
 
 }
 
@@ -139,9 +243,26 @@ void Graphics::Render()
   glUniformMatrix4fv(m_viewMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetView())); 
 
   // Render the objects  
-  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(m_BObj->GetModel()));
-  m_BObj->Render(gSampler);
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(rWall->GetModel()));
+  rWall->Render(gSampler);
 
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(lWall->GetModel()));
+  lWall->Render(gSampler);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(tWall->GetModel()));
+  tWall->Render(gSampler);
+  
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(cylinder->GetModel()));
+  cylinder->Render(gSampler);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(ground->GetModel()));
+  ground->Render(gSampler);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(ball->GetModel()));
+  ball->Render(gSampler);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(cube->GetModel()));
+  cube->Render(gSampler);
 
   // Get any errors from OpenGL
   auto error = glGetError();

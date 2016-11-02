@@ -1,4 +1,0 @@
-/home/samson/Documents/Programming/CS680_Haile/PA8/build/CMakeFiles/edit_cache.dir
-/home/samson/Documents/Programming/CS680_Haile/PA8/build/CMakeFiles/Tutorial_SUCCESSFUL.dir
-/home/samson/Documents/Programming/CS680_Haile/PA8/build/CMakeFiles/rebuild_cache.dir
-/home/samson/Documents/Programming/CS680_Haile/PA8/build/CMakeFiles/Tutorial.dir
