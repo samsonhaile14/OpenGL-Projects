@@ -17,6 +17,8 @@ class Graphics
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[]);
     void Render();
+    bool loadShaderProgram(const char *fileVS, const char *fileFS);
+    bool setShaderProgram(int index);
 
   private:
     std::string ErrorString(GLenum error);
@@ -25,6 +27,7 @@ class Graphics
 
     Camera *m_camera;
     Shader *m_shader;
+    std::vector<Shader*> m_shaderArr;
 
     GLint l_ambientProduct;
     GLint l_diffuseProduct;

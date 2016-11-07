@@ -128,67 +128,21 @@ bool Graphics::Initialize(int width, int height)
 
 
   // Set up the shaders
-  m_shader = new Shader();
-  if(!m_shader->Initialize())
-  {
-    printf("Shader Failed to Initialize\n");
+  if( !loadShaderProgram("vertex.glsl", "fragment.glsl") ){
+    printf("Fail to load shader program (0)\r\n");
     return false;
   }
 
-  // Add the vertex shader
-  if(!m_shader->AddShader(GL_VERTEX_SHADER))
-  {
-    printf("Vertex Shader failed to Initialize\n");
+  if( !loadShaderProgram("test_vertex.glsl", "test_fragment.glsl") ){
+    printf("Fail to load shader program (1)\r\n");
     return false;
   }
 
-  // Add the fragment shader
-  if(!m_shader->AddShader(GL_FRAGMENT_SHADER))
-  {
-    printf("Fragment Shader failed to Initialize\n");
+  // load default shader
+  if( !setShaderProgram(0) ){
+    printf("Setting shader failed.\r\n");
     return false;
   }
-
-  // Connect the program
-  if(!m_shader->Finalize())
-  {
-    printf("Program to Finalize\n");
-    return false;
-  }
-
-  l_ambientProduct = m_shader->GetUniformLocation("ambientProduct");
-  l_diffuseProduct = m_shader->GetUniformLocation("diffuseProduct");
-  l_specularProduct = m_shader->GetUniformLocation("specularProduct");
-
-  l_shininess = m_shader->GetUniformLocation("shininess");
-  l_lightPos = m_shader->GetUniformLocation("lightPosition");
-  
-
-  // Locate the projection matrix in the shader
-  m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
-  if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) 
-  {
-    printf("m_projectionMatrix not found\n");
-    return false;
-  }
-
-  // Locate the view matrix in the shader
-  m_viewMatrix = m_shader->GetUniformLocation("viewMatrix");
-  if (m_viewMatrix == INVALID_UNIFORM_LOCATION) 
-  {
-    printf("m_viewMatrix not found\n");
-    return false;
-  }
-
-  // Locate the model matrix in the shader
-  m_modelMatrix = m_shader->GetUniformLocation("modelMatrix");
-  if (m_modelMatrix == INVALID_UNIFORM_LOCATION) 
-  {
-    printf("m_modelMatrix not found\n");
-    return false;
-  }
-
-  gSampler = m_shader->GetUniformLocation( "gSampler" );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -313,3 +267,86 @@ std::string Graphics::ErrorString(GLenum error)
   }
 }
 
+bool Graphics::loadShaderProgram(const char *fileVS, const char *fileFS){
+
+  Shader *newProgram = new Shader();
+  if(!newProgram->Initialize())
+  {
+    printf("Shader Failed to Initialize\n");
+    return false;
+  }
+
+  // Add the vertex shader
+  if(!newProgram->AddShader(GL_VERTEX_SHADER, fileVS))
+  {
+    printf("Vertex Shader failed to Initialize\n");
+    return false;
+  }
+
+  // Add the fragment shader
+  if(!newProgram->AddShader(GL_FRAGMENT_SHADER, fileFS))
+  {
+    printf("Fragment Shader failed to Initialize\n");
+    return false;
+  }
+
+  // Connect the program
+  if(!newProgram->Finalize())
+  {
+    printf("Program to Finalize\n");
+    return false;
+  }
+
+  m_shaderArr.push_back(newProgram);
+  return true;
+}
+
+bool Graphics::setShaderProgram(int index){
+
+  // error check
+  if( index < 0 || index >= m_shaderArr.size() ){
+    printf("Error: shader list index %d out of range.\r\n", index);
+    return false;
+  }
+
+  // set new shader
+  m_shader = m_shaderArr[index];
+
+  // reassignm uniform locations
+  l_ambientProduct = m_shader->GetUniformLocation("ambientProduct");
+  l_diffuseProduct = m_shader->GetUniformLocation("diffuseProduct");
+  l_specularProduct = m_shader->GetUniformLocation("specularProduct");
+
+  l_shininess = m_shader->GetUniformLocation("shininess");
+  l_lightPos = m_shader->GetUniformLocation("lightPosition");
+  
+
+  // Locate the projection matrix in the shader
+  m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
+  if (m_projectionMatrix == INVALID_UNIFORM_LOCATION) 
+  {
+    printf("m_projectionMatrix not found\n");
+    return false;
+  }
+
+  // Locate the view matrix in the shader
+  m_viewMatrix = m_shader->GetUniformLocation("viewMatrix");
+  if (m_viewMatrix == INVALID_UNIFORM_LOCATION) 
+  {
+    printf("m_viewMatrix not found\n");
+    return false;
+  }
+
+  // Locate the model matrix in the shader
+  m_modelMatrix = m_shader->GetUniformLocation("modelMatrix");
+  if (m_modelMatrix == INVALID_UNIFORM_LOCATION) 
+  {
+    printf("m_modelMatrix not found\n");
+    return false;
+  }
+
+  gSampler = m_shader->GetUniformLocation( "gSampler" );
+
+
+  return true;
+}

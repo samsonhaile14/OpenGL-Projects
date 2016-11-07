@@ -115,9 +115,17 @@ void Engine::Keyboard()
       movement[1] = 1.0;
     }
 
+    else if (m_event.key.keysym.sym == SDLK_v)
+    {
+      m_graphics->setShaderProgram(0);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_f)
+    {
+      m_graphics->setShaderProgram(1);
+    }
 
   }
-
 }
 
 unsigned int Engine::getDT()
