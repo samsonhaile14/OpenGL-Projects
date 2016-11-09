@@ -12,7 +12,7 @@ using namespace std;
 class Graphics
 {
   public:
-    Graphics(float dimness);
+    Graphics(float dimness, float ambDimness);
     ~Graphics();
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[]);
@@ -39,6 +39,7 @@ class Graphics
     GLint l_shininess;
 
     GLint l_dimness;
+    GLint l_ambDimness;
 
     GLint gSampler;
 
@@ -51,7 +52,7 @@ class Graphics
     Object *cube;
 
     glm::vec4 lightPos;
-    float g_dimness;
+    float g_dimness, g_ambDimness;
 
     //collision variables
     btBroadphaseInterface *broadphase;

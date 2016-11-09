@@ -9,10 +9,11 @@ enum collisionTypes{
    COL_BALL = BIT(2)
 };
 
-Graphics::Graphics(float dimness )
+Graphics::Graphics(float dimness, float ambDimness )
 {
 
 g_dimness = dimness;
+g_ambDimness = ambDimness;
 
 }
 
@@ -206,6 +207,7 @@ void Graphics::Render()
   //set light position and brightness
   glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
   glUniform1f( l_dimness, g_dimness );
+  glUniform1f( l_ambDimness, g_ambDimness );
 
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
@@ -328,6 +330,7 @@ bool Graphics::setShaderProgram(int index){
   l_lightPos = m_shader->GetUniformLocation("LightPosition");
 
   l_dimness = m_shader->GetUniformLocation("Dimness");
+  l_ambDimness = m_shader->GetUniformLocation("AmbientDimness");
   
 
   // Locate the projection matrix in the shader

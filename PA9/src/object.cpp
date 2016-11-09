@@ -115,7 +115,7 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
 
   totalMeshVerts = Vertices.size();
   }
-printf("\n");
+
   init(m_mass,meshType);
 }
 
