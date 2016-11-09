@@ -13,6 +13,9 @@
           uniform vec4 LightPosition; \
           uniform float Shininess; \
           \
+          uniform float Dimness; \
+          uniform float AmbientDimness; \
+          \
           out vec2 TexCoord; \
           out vec4 color; \
           \
@@ -29,7 +32,7 @@
           \
             vec3 N = normalize( ModelView * vec4(v_normal,0.0) ).xyz; \
           \
-            vec4 ambient = AmbientProduct; \
+            vec4 ambient = AmbientProduct/AmbientDimness; \
             \
             float Kd = max( dot(L,N),0.0 ); \
             vec4 diffuse = Kd * DiffuseProduct; \
@@ -37,7 +40,7 @@
             vec4 specular = Ks * SpecularProduct; \
             gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(v_position,1.0); \
             \
-            color = (ambient + diffuse + specular); \
+            color = (ambient + diffuse + specular)/Dimness; \
             color.a = 1.0; \
             TexCoord = v_uv; \
           } \

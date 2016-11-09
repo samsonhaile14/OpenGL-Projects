@@ -11,7 +11,7 @@ class Engine
 {
   public:
     Engine(string name, int width, int height, 
-           std::vector< std::string > fileNames );
+           float dimness, float ambDimness );
     Engine(string name);
     ~Engine();
     bool Initialize();
@@ -27,7 +27,7 @@ class Engine
     int m_WINDOW_WIDTH;
     int m_WINDOW_HEIGHT;
     bool m_FULLSCREEN;
-    std::vector< std::string > gFiles;
+    float e_dimness,e_ambDimness;
     SDL_Event m_event;
 
     Graphics *m_graphics;

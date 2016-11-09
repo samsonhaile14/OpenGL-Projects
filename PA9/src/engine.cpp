@@ -2,13 +2,14 @@
 #include "engine.h"
 
 Engine::Engine(string name, int width, int height, 
-               std::vector< std::string > fileNames)
+               float dimness, float ambDimness)
 {
   m_WINDOW_NAME = name;
   m_WINDOW_WIDTH = width;
   m_WINDOW_HEIGHT = height;
   m_FULLSCREEN = false;
-  gFiles = fileNames;
+  e_dimness = dimness;
+  e_ambDimness = ambDimness;
 }
 
 Engine::Engine(string name)
@@ -38,7 +39,7 @@ bool Engine::Initialize()
   }
 
   // Start the graphics
-  m_graphics = new Graphics(gFiles);
+  m_graphics = new Graphics(e_dimness,e_ambDimness);
   if(!m_graphics->Initialize(m_WINDOW_WIDTH, m_WINDOW_HEIGHT))
   {
     printf("The graphics failed to initialize.\n");
