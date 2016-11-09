@@ -45,8 +45,6 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
       material->Get( AI_MATKEY_SHININESS, shininess );
       shininess/=1024.0;
 
-      printf( "%f\n", shininess );
-
     //set up texture   
        aiString texFileName;
        Magick::Blob m_blob;

@@ -12,7 +12,7 @@ using namespace std;
 class Graphics
 {
   public:
-    Graphics(std::vector< std::string > graphicFiles);
+    Graphics(float dimness);
     ~Graphics();
     bool Initialize(int width, int height);
     void Update(unsigned int dt, float movement[]);
@@ -23,8 +23,6 @@ class Graphics
   private:
     std::string ErrorString(GLenum error);
    
-    std::vector< std::string > oFiles;
-
     Camera *m_camera;
     Shader *m_shader;
     std::vector<Shader*> m_shaderArr;
@@ -40,6 +38,8 @@ class Graphics
     GLint l_lightPos;
     GLint l_shininess;
 
+    GLint l_dimness;
+
     GLint gSampler;
 
     Object *rWall;
@@ -51,6 +51,7 @@ class Graphics
     Object *cube;
 
     glm::vec4 lightPos;
+    float g_dimness;
 
     //collision variables
     btBroadphaseInterface *broadphase;
