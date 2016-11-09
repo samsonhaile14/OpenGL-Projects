@@ -145,7 +145,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   lightPos = glm::vec4( 100.0,30.0,3.0,1.0 );
+   lightPos = glm::vec4( 100.0,-30.0,3.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -191,7 +191,11 @@ ground->Update( dt, movement, false);
 ball->Update(dt,movement,false);
 cube->Update(dt,movement,false);
 
-
+// update lighting
+glm::mat4 ballMatrix = ball->GetModel();
+glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
+glm::vec4 lightBase = glm::vec4(0.0, 3.0, 10.0, 1.0);
+lightPos = ballPosition *  lightBase;
 }
 
 void Graphics::Render()
