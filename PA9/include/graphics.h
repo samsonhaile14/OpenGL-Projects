@@ -50,6 +50,8 @@ class Graphics
     Object *ball;
     Object *cube;
 
+    glm::vec4 lightPos;
+
     //collision variables
     btBroadphaseInterface *broadphase;
     btDefaultCollisionConfiguration *collisionConfiguration;

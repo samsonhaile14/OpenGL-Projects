@@ -128,7 +128,7 @@ bool Graphics::Initialize(int width, int height)
 
 
   // Set up the shaders
-  if( !loadShaderProgram("vertex.glsl", "fragment.glsl") ){
+  if( !loadShaderProgram("test_vertex.glsl", "test_fragment.glsl") ){
     printf("Fail to load shader program (0)\r\n");
     return false;
   }
@@ -145,8 +145,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   glm::vec4 lightPos( -2.0,20.0,0.0,1.0 );
-   glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
+   lightPos = glm::vec4( -2.0,30.0,3.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -203,6 +202,9 @@ void Graphics::Render()
 
   // Start the correct program
   m_shader->Enable();
+
+  //set light position
+  glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
 
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
@@ -317,12 +319,12 @@ bool Graphics::setShaderProgram(int index){
   m_shader = m_shaderArr[index];
 
   // reassignm uniform locations
-  l_amb = m_shader->GetUniformLocation("ambientProduct");
-  l_dif = m_shader->GetUniformLocation("diffuseProduct");
-  l_spec = m_shader->GetUniformLocation("specularProduct");
+  l_amb = m_shader->GetUniformLocation("AmbientProduct");
+  l_dif = m_shader->GetUniformLocation("DiffuseProduct");
+  l_spec = m_shader->GetUniformLocation("SpecularProduct");
 
-  l_shininess = m_shader->GetUniformLocation("shininess");
-  l_lightPos = m_shader->GetUniformLocation("lightPosition");
+  l_shininess = m_shader->GetUniformLocation("Shininess");
+  l_lightPos = m_shader->GetUniformLocation("LightPosition");
   
 
   // Locate the projection matrix in the shader

@@ -32,19 +32,20 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
     aiMaterial *material = object->mMaterials[mtlIndex]; 
 
     //record material values
-      glm::vec3 surfValues;
-
+      aiColor3D surfValues;
       material->Get( AI_MATKEY_COLOR_AMBIENT, surfValues );
-      ambient.push_back( glm::vec4( surfValues, 1.0 ) );
-
+      ambient.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
+printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
       material->Get( AI_MATKEY_COLOR_DIFFUSE, surfValues );      
-      diffuse.push_back( glm::vec4( surfValues, 1.0 ) );
-
+      diffuse.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
+printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
       material->Get( AI_MATKEY_COLOR_SPECULAR, surfValues );
-      specular.push_back( glm::vec4(surfValues, 1.0) );
-
+      specular.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
+printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
       material->Get( AI_MATKEY_SHININESS, shininess );
-      printf( "%f\n", shininess );
+      shininess/=4.0;
+
+      shininess = 0;
 
     //set up texture   
        aiString texFileName;
@@ -86,7 +87,6 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
       aiVector3D uv = mesh->mTextureCoords[0][j];
 
       aiVector3D nm = mesh->mNormals[j];
-
       Vertices.push_back( {
         {vertex.x,vertex.y,vertex.z},
         {uv.x,uv.y},
@@ -117,7 +117,7 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
 
   totalMeshVerts = Vertices.size();
   }
-
+printf("\n");
   init(m_mass,meshType);
 }
 
