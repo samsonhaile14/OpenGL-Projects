@@ -129,12 +129,12 @@ bool Graphics::Initialize(int width, int height)
 
 
   // Set up the shaders
-  if( !loadShaderProgram("test_vertex.glsl", "test_fragment.glsl") ){
+  if( !loadShaderProgram("vl_vertex.glsl", "vl_fragment.glsl") ){
     printf("Fail to load shader program (0)\r\n");
     return false;
   }
 
-  if( !loadShaderProgram("test_vertex.glsl", "test_fragment.glsl") ){
+  if( !loadShaderProgram("fl_vertex.glsl", "fl_fragment.glsl") ){
     printf("Fail to load shader program (1)\r\n");
     return false;
   }
