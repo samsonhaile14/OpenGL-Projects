@@ -29,9 +29,9 @@ class Graphics
     Shader *m_shader;
     std::vector<Shader*> m_shaderArr;
 
-    GLint l_ambientProduct;
-    GLint l_diffuseProduct;
-    GLint l_specularProduct;
+    GLint l_amb;
+    GLint l_dif;
+    GLint l_spec;
 
     GLint m_projectionMatrix;
     GLint m_viewMatrix;

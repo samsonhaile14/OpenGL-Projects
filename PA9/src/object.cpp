@@ -31,6 +31,21 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
     unsigned int mtlIndex = mesh->mMaterialIndex;
     aiMaterial *material = object->mMaterials[mtlIndex]; 
 
+    //record material values
+      glm::vec3 surfValues;
+
+      material->Get( AI_MATKEY_COLOR_AMBIENT, surfValues );
+      ambient.push_back( glm::vec4( surfValues, 1.0 ) );
+
+      material->Get( AI_MATKEY_COLOR_DIFFUSE, surfValues );      
+      diffuse.push_back( glm::vec4( surfValues, 1.0 ) );
+
+      material->Get( AI_MATKEY_COLOR_SPECULAR, surfValues );
+      specular.push_back( glm::vec4(surfValues, 1.0) );
+
+      material->Get( AI_MATKEY_SHININESS, shininess );
+      printf( "%f\n", shininess );
+
     //set up texture   
        aiString texFileName;
        Magick::Blob m_blob;
@@ -187,7 +202,7 @@ glm::mat4 Object::GetModel()
   return model;
 }
 
-void Object::Render(GLint gSampler)
+void Object::Render(GLint gSampler, GLint gAmb, GLint gDif, GLint gSpe, GLint shine)
 {
 
   int indx;
@@ -203,7 +218,14 @@ void Object::Render(GLint gSampler)
 
   for( indx = 0; indx < texObjs.size(); indx++ ){
 
-     glUniform1i(gSampler,indx);
+     //for texture loading
+        glUniform1i(gSampler,indx);
+
+     //for reporting surface properties
+        glUniform4fv( gAmb, 1, glm::value_ptr(ambient[indx]) );
+        glUniform4fv( gDif, 1, glm::value_ptr(diffuse[indx]) );
+        glUniform4fv( gSpe, 1, glm::value_ptr(specular[indx]) );
+        glUniform1f( shine, shininess );
 
      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 

@@ -144,6 +144,10 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
+  //set light position
+   glm::vec4 lightPos( -2.0,20.0,0.0,1.0 );
+   glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
+
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
@@ -206,25 +210,25 @@ void Graphics::Render()
 
   // Render the objects  
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(rWall->GetModel()));
-  rWall->Render(gSampler);
+  rWall->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(lWall->GetModel()));
-  lWall->Render(gSampler);
+  lWall->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(tWall->GetModel()));
-  tWall->Render(gSampler);
+  tWall->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
   
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(cylinder->GetModel()));
-  cylinder->Render(gSampler);
+  cylinder->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(ground->GetModel()));
-  ground->Render(gSampler);
+  ground->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(ball->GetModel()));
-  ball->Render(gSampler);
+  ball->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(cube->GetModel()));
-  cube->Render(gSampler);
+  cube->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   // Get any errors from OpenGL
   auto error = glGetError();
@@ -313,9 +317,9 @@ bool Graphics::setShaderProgram(int index){
   m_shader = m_shaderArr[index];
 
   // reassignm uniform locations
-  l_ambientProduct = m_shader->GetUniformLocation("ambientProduct");
-  l_diffuseProduct = m_shader->GetUniformLocation("diffuseProduct");
-  l_specularProduct = m_shader->GetUniformLocation("specularProduct");
+  l_amb = m_shader->GetUniformLocation("ambientProduct");
+  l_dif = m_shader->GetUniformLocation("diffuseProduct");
+  l_spec = m_shader->GetUniformLocation("specularProduct");
 
   l_shininess = m_shader->GetUniformLocation("shininess");
   l_lightPos = m_shader->GetUniformLocation("lightPosition");

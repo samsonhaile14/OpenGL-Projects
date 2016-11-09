@@ -25,7 +25,7 @@ class Object
 
     ~Object();
     void Update(unsigned int dt, float movement[], bool pause);
-    void Render(GLint gSampler);
+    void Render(GLint gSampler, GLint gAmb, GLint gDif, GLint gSpe, GLint shine);
 
     void Bind(GLenum TextureUnit, int texIndx);
 
@@ -41,6 +41,7 @@ class Object
     btScalar mass;
     btVector3 inertia;
     btRigidBody *rigidBody;
+
     glm::mat4 model;
 
   private:
@@ -56,6 +57,10 @@ class Object
     std::vector< Magick::Blob > blobs;
     std::vector< GLuint > texObjs;
 
+    std::vector<glm::vec4> ambient;
+    std::vector<glm::vec4> diffuse;
+    std::vector<glm::vec4> specular;
+    float shininess;
 };
 
 #endif /* OBJECT_H */
