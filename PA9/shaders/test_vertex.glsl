@@ -37,7 +37,7 @@
             vec4 specular = Ks * SpecularProduct; \
             gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(v_position,1.0); \
             \
-            color = ambient + diffuse + specular; \
+            color = (ambient + diffuse + specular); \
             color.a = 1.0; \
             TexCoord = v_uv; \
           } \

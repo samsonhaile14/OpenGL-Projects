@@ -35,17 +35,17 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
       aiColor3D surfValues;
       material->Get( AI_MATKEY_COLOR_AMBIENT, surfValues );
       ambient.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
-printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
+
       material->Get( AI_MATKEY_COLOR_DIFFUSE, surfValues );      
       diffuse.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
-printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
+
       material->Get( AI_MATKEY_COLOR_SPECULAR, surfValues );
       specular.push_back( glm::vec4( surfValues.r,surfValues.g,surfValues.b, 1.0 ) );
-printf( "%f %f %f\n", surfValues.r, surfValues.g, surfValues.b );
-      material->Get( AI_MATKEY_SHININESS, shininess );
-      shininess/=4.0;
 
-      shininess = 0;
+      material->Get( AI_MATKEY_SHININESS, shininess );
+      shininess/=1024.0;
+
+      printf( "%f\n", shininess );
 
     //set up texture   
        aiString texFileName;

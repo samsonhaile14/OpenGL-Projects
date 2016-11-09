@@ -145,7 +145,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   lightPos = glm::vec4( -2.0,30.0,3.0,1.0 );
+   lightPos = glm::vec4( 100.0,30.0,3.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -164,7 +164,7 @@ if( movement[0] != 0 || movement[1] == 1 ){
    cube->rigidBody->getMotionState()->getWorldTransform(trans);
    
 
-   trans.setOrigin( btVector3( movement[0],1.5,-7.5 ) );
+   trans.setOrigin( btVector3( movement[0]*1.25,1.5,-7.5 ) );
 
    cube->rigidBody->getMotionState()->setWorldTransform( trans );
 
