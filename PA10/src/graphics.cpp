@@ -19,16 +19,59 @@ g_ambDimness = ambDimness;
 
 Graphics::~Graphics()
 {
+ 
+  //bullet stuff 
+  if(broadphase != NULL ){
+   delete broadphase;
+   broadphase = NULL;
+  }
 
-  delete collisionConfiguration;
-  delete dispatcher;
-  delete solver;
-  delete dynamicsWorld;
+  if(collisionConfiguration != NULL ){
+   delete collisionConfiguration;
+   collisionConfiguration = NULL;
+  }
 
-  collisionConfiguration = NULL;
-  dispatcher = NULL;
-  solver = NULL;
-  dynamicsWorld = NULL;
+  if(dispatcher != NULL){
+   delete dispatcher;
+   dispatcher = NULL;
+  }
+
+  if(solver != NULL){
+   delete solver;
+   solver = NULL;
+  }
+
+  if(dynamicsWorld != NULL){
+   //delete dynamicsWorld;
+   //dynamicsWorld = NULL;
+  }
+
+  //objects
+    if( board != NULL ){
+     delete board;
+     board = NULL;
+    }
+
+    if( lFlipper != NULL ){
+     delete lFlipper;
+     lFlipper = NULL;
+    }
+
+    if( rFlipper != NULL ){
+     delete rFlipper;
+     rFlipper = NULL;
+    }
+
+    if( bumperOne != NULL ){
+     delete bumperOne;
+     bumperOne = NULL;
+    }
+
+    if( ball != NULL ){
+     delete ball;
+     ball = NULL;
+    }
+
 }
 
 bool Graphics::Initialize(int width, int height)
@@ -65,28 +108,6 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-  // Create the objects
-   board = new Object(0.0,4.0,6.5, //position
-                      0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
-                     0.0, 0,"../objects/box.obj");   //mass,meshtype,objfile
-
-   lFlipper = new Object(5.0,0.0,-6.5, //position
-                      0.0,-(2.0 * 3.141592) / 12.0,0.0 , //rotation
-                     1.0, 0,"../objects/flipper.obj");   //mass,meshtype,objfile
-
-   rFlipper = new Object(-5.0,0.0,-6.5, //position
-                      0.0,(2.0 * 3.141592) / 2.0 + (2.0 * 3.141592) / 12.0,0.0 , //rotation
-                     1.0, 0,"../objects/flipper.obj");   //mass,meshtype,objfile
-
-   bumperOne = new Object( 0.4,0.0,6.5,
-                          0.0,0.0,0.0,
-                          0.0,2,"../objects/bumper.obj" );
-
-
-   ball = new Object(0.0f,5.0f,4.0,
-                     0.0,0.0,0.0,
-                     1.0, 1,"../objects/sphere.obj");
-
   // Create collider environment
   broadphase = new btDbvtBroadphase();
   collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -95,13 +116,46 @@ bool Graphics::Initialize(int width, int height)
   dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, 
                                               collisionConfiguration);
 
-  dynamicsWorld->setGravity(btVector3(0.0,-9.81,-0.2));
+  // Create the objects
+   board = new Object(0.0,4.0,6.5, //position
+                      0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
+                     0.0, 0,"../objects/box.obj");   //mass,meshtype,objfile
+
+   lFlipper = new Object(5.5,0.0,-6.5, //position
+                      0.0,-(2.0 * 3.141592) / 12.0,0.0 , //rotation
+                     5.0, 0,"../objects/flipper.obj");   //mass,meshtype,objfile
+
+   rFlipper = new Object(-5.5,0.0,-6.5, //position
+                      0.0,(2.0 * 3.141592) / 2.0 + (2.0 * 3.141592) / 12.0,0.0 , //rotation
+                     5.0, 0,"../objects/flipper.obj");   //mass,meshtype,objfile
+
+   bumperOne = new Object( 0.0,0.0,12.5,
+                          0.0,0.0,0.0,
+                          1.0,0,"../objects/bumper.obj" );
+
+   bumperTwo = new Object( -5.0,0.0,11.0,
+                          0.0,0.0,0.0,
+                          1.0,0,"../objects/bumper.obj" );
+
+   bumperThree = new Object( 5.0,0.0,11.0,
+                          0.0,0.0,0.0,
+                          1.0,0,"../objects/bumper.obj" );
+
+
+   ball = new Object(-0.5f,5.0f,8.0,
+                     0.0,0.0,0.0,
+                     1.0, 1,"../objects/sphere.obj");
+
+  SLOPE = 0.1;
+  dynamicsWorld->setGravity(btVector3(0.0,-9.81,-1.0 * SLOPE));
 
   //Set kinematic/static rigidbodies and add rigidbodies to dynamicWorld
 
   int ballCollide = COL_WALL;
 
   dynamicsWorld->addRigidBody(bumperOne->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(bumperTwo->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(bumperThree->rigidBody,COL_WALL,COL_BALL);
   dynamicsWorld->addRigidBody(board->rigidBody,COL_WALL,COL_BALL);
   dynamicsWorld->addRigidBody(ball->rigidBody,COL_BALL, ballCollide);
   dynamicsWorld->addRigidBody(lFlipper->rigidBody,COL_WALL,COL_BALL);
@@ -110,12 +164,29 @@ bool Graphics::Initialize(int width, int height)
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
   board->rigidBody->setActivationState(DISABLE_DEACTIVATION);
-  lFlipper->rigidBody->setCollisionFlags(lFlipper->rigidBody->getCollisionFlags() | 
+  bumperOne->rigidBody->setCollisionFlags(bumperOne->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
+  bumperOne->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+  bumperTwo->rigidBody->setCollisionFlags(bumperTwo->rigidBody->getCollisionFlags() | 
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  bumperTwo->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+  bumperThree->rigidBody->setCollisionFlags(bumperThree->rigidBody->getCollisionFlags() | 
+                                      btCollisionObject::CF_KINEMATIC_OBJECT);
+  bumperThree->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+
   lFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
-  rFlipper->rigidBody->setCollisionFlags(rFlipper->rigidBody->getCollisionFlags() | 
-                                      btCollisionObject::CF_KINEMATIC_OBJECT);
   rFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  ball->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+
+  lFlipper->rigidBody->setLinearFactor( btVector3( 0,1,0 ) );
+  lFlipper->rigidBody->setAngularFactor( btVector3( 1,1,1 ) );
+  rFlipper->rigidBody->setLinearFactor( btVector3( 0,1,0 ) );
+  rFlipper->rigidBody->setAngularFactor( btVector3( 1,1,1 ) );
+
 
   // Set up the shaders
   if( !loadShaderProgram("vl_vertex.glsl", "vl_fragment.glsl") ){
@@ -147,32 +218,46 @@ bool Graphics::Initialize(int width, int height)
 void Graphics::Update(unsigned int dt, float movement[])
 {
 
-dynamicsWorld->stepSimulation(dt,10);
+dynamicsWorld->stepSimulation(dt,5);
 
 btTransform trans;
 btQuaternion rot;
 
+float leverPower = 20.0;
 
-if(movement[0] > 0){
+if(movement[0] > 0){   
+
    lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
 
-   rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 48.0,0.0 );
-   trans.setRotation( rot );   
 
-   lFlipper->rigidBody->getMotionState()->setWorldTransform( trans );
-   lFlipper->rigidBody->setCenterOfMassTransform( trans );
+   if( trans.getOrigin().getZ() < -4.0 ){
+   lFlipper->rigidBody->applyTorque( btVector3( leverPower+SLOPE,0.0,0.0 )  );
+   //lFlipper->rigidBody->setAngularVelocity( btVector3( 10.0,1.0,0.0 )  );   
+   }
 
+   else{
+   lFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );
+   }
+
+   printf( "at: %f %d\n", lFlipper->rigidBody->getTotalTorque().getX(), dt);
+   printf( "av: %f %d\n", lFlipper->rigidBody->getAngularVelocity().getX(), dt);
 
 }
 
 else{
+
    lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
 
-   rot.setEulerZYX( 0.0,-(2.0 * 3.141592) / 12.0,0.0  );
-   trans.setRotation( rot );   
+   rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 48.0,0.0 );
 
-   lFlipper->rigidBody->getMotionState()->setWorldTransform( trans );   
-   lFlipper->rigidBody->setCenterOfMassTransform( trans );
+   if( trans.getOrigin().getZ() > -6.0 ){
+   lFlipper->rigidBody->applyTorque( btVector3( -1.0*leverPower-SLOPE,0.0,0.0 )  );
+   //lFlipper->rigidBody->setAngularVelocity( btVector3( -10.0,0.0,0.0 )  );   
+   }
+
+   else{
+   lFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
+   }
 
 }
 
@@ -181,25 +266,38 @@ if(movement[1] > 0){
    rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
 
    rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 2.0 - (2.0 * 3.141592) / 48.0,0.0  );
-   trans.setRotation( rot );   
 
-   rFlipper->rigidBody->getMotionState()->setWorldTransform( trans );   
-   rFlipper->rigidBody->setCenterOfMassTransform( trans );
+   if( trans.getOrigin().getZ() < -4.0 ){
+   rFlipper->rigidBody->applyTorque( btVector3( leverPower+SLOPE,0.0,0.0 )  );
+   //rFlipper->rigidBody->setAngularVelocity( btVector3( 10.0,0.0,0.0 )  );   
+   }
+
+   else{
+   rFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
+   }
+
 }
 
 else{
    rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
 
    rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 2.0 + (2.0 * 3.141592) / 12.0,0.0  );
-   trans.setRotation( rot );   
-   
-   rFlipper->rigidBody->getMotionState()->setWorldTransform( trans );   
-   rFlipper->rigidBody->setCenterOfMassTransform( trans );
+
+   if( trans.getOrigin().getZ() > -6.0 ){
+   rFlipper->rigidBody->applyTorque( btVector3( -1.0*leverPower-SLOPE,0.0,0.0 )  );
+   //rFlipper->rigidBody->setAngularVelocity( btVector3( -10.0,0.0,0.0 )  );   
+   }
+
+   else{
+   rFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
+   }
 
 }
 
-dynamicsWorld->stepSimulation(dt,10);
 bumperOne->Update( dt,movement,false);
+bumperTwo->Update( dt,movement,false);
+bumperThree->Update( dt,movement,false);
+
 board->Update( dt, movement, false);
 
 ball->Update(dt,movement,false);
@@ -235,6 +333,13 @@ void Graphics::Render()
   // Render the objects  
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(bumperOne->GetModel()));
   bumperOne->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(bumperTwo->GetModel()));
+  bumperTwo->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(bumperThree->GetModel()));
+  bumperThree->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(board->GetModel()));
   board->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);

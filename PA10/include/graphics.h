@@ -46,13 +46,10 @@ class Graphics
     Object *board;
     Object *lFlipper;
     Object *rFlipper;
-    Object *rWall;
-    Object *lWall;
-    Object *tWall;
     Object *bumperOne;
-    Object *ground;
+    Object *bumperTwo;
+    Object *bumperThree;
     Object *ball;
-    Object *cube;
 
     glm::vec4 lightPos;
     float g_dimness, g_ambDimness;
@@ -66,6 +63,8 @@ class Graphics
     
 
     bool clockwise = true;
+
+    float SLOPE;
 };
 
 #endif /* GRAPHICS_H */

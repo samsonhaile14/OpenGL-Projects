@@ -151,7 +151,7 @@ void Object::init(float m_mass,int meshType)
                       btTransform(rot,btVector3(globalPos.x,globalPos.y,globalPos.z)));
 
   mass = m_mass;
-  inertia = btVector3(0.0,0.0,0.0);
+  inertia = btVector3(1.0,1.0,1.0);
   shape->calculateLocalInertia(mass,inertia);
   btRigidBody::btRigidBodyConstructionInfo shapeRigidBodyCI(mass,shapeMotionState,
                                                             shape,inertia);
@@ -176,10 +176,29 @@ Object::~Object()
   if(objTriMesh != NULL){
    delete objTriMesh;
    objTriMesh = NULL;
+  }
+
+   if(shape != NULL){
+    delete shape;
+    shape = NULL;
+   }
+
+   if( shapeMotionState != NULL){
+    delete shapeMotionState;
+    shapeMotionState = NULL;
+   }
+
+   if( rigidBody != NULL ){
+    delete rigidBody;
+    rigidBody = NULL;
    }
 
   Vertices.clear();
   Indices.clear();
+
+  skins.clear();
+  blobs.clear();
+  texObjs.clear();
 }
 
 void Object::Update(unsigned int dt, float movement[], bool pause)
