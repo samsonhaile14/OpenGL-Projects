@@ -342,7 +342,7 @@ void Graphics::Update(unsigned int dt, float movement[])
   if (balLoc.getZ() < -12.5){
       trans.setIdentity();
       trans.setOrigin(btVector3 (-12.0,-0.25,-6.0) );
-      //trans.setRotation(btQuaternion( 1.0,1.0,1.0, 1.0) );
+
       plunger->rigidBody->setWorldTransform(trans);
       plunger->rigidBody->getMotionState()->setWorldTransform(trans);
  
@@ -351,11 +351,7 @@ void Graphics::Update(unsigned int dt, float movement[])
       ball->rigidBody->setWorldTransform(trans);
       ball->rigidBody->getMotionState()->setWorldTransform(trans);
 
-      //ball->rigidBody->activate(true);
-      //ball->rigidBody->proceedToTransform(trans);
-      //ball->rigidBody->setCenterOfMassTransform(trans);
-      
-      //plunger->rigidBody->proceedToTransform(trans);
+(trans);
 
   }
 
