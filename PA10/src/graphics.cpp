@@ -351,8 +351,6 @@ void Graphics::Update(unsigned int dt, float movement[])
       ball->rigidBody->setWorldTransform(trans);
       ball->rigidBody->getMotionState()->setWorldTransform(trans);
 
-(trans);
-
   }
 
   bumperOne->Update( dt,movement,false);
