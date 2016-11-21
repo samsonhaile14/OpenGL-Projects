@@ -136,7 +136,7 @@ bool Graphics::Initialize(int width, int height)
                           0.0,0.0,0.0,
                           1.0,0,"../objects/bumper.obj" );
 
-   bumperTwo = new Object( -5.0,0.0,11.0,
+   bumperTwo = new Object( -5.0,0.0,14.0,
                           0.0,0.0,0.0,
                           1.0,0,"../objects/bumper.obj" );
 
@@ -145,12 +145,12 @@ bool Graphics::Initialize(int width, int height)
                           1.0,0,"../objects/bumper.obj" );
 
 
-   ball = new Object(-11.0f,0.6f,-2.4f,
+   ball = new Object(-12.0f,0.6f,-2.4f,
                      0.0,0.0,0.0,
                      1.0, 1,"../objects/sphere.obj");
 
   
-   plunger = new Object(-11.5f,0.0f,-6.0f,
+   plunger = new Object(-12.0f,-0.25f,-6.0f,
                      0.0,0.0,0.0,
                      1.0, 1,"../objects/plunger.obj");
 
@@ -333,6 +333,30 @@ void Graphics::Update(unsigned int dt, float movement[])
           movement[3] = 0.0;
       }
       
+  }
+
+  // ball data
+  ball->rigidBody->getMotionState()->getWorldTransform(trans);
+  btVector3 balLoc = trans.getOrigin();
+
+  if (balLoc.getZ() < -12.5){
+      trans.setIdentity();
+      trans.setOrigin(btVector3 (-12.0,-0.25,-6.0) );
+      //trans.setRotation(btQuaternion( 1.0,1.0,1.0, 1.0) );
+      plunger->rigidBody->setWorldTransform(trans);
+      plunger->rigidBody->getMotionState()->setWorldTransform(trans);
+ 
+
+      trans.setOrigin(btVector3 (-12.0,0.6,-2.4) );
+      ball->rigidBody->setWorldTransform(trans);
+      ball->rigidBody->getMotionState()->setWorldTransform(trans);
+
+      //ball->rigidBody->activate(true);
+      //ball->rigidBody->proceedToTransform(trans);
+      //ball->rigidBody->setCenterOfMassTransform(trans);
+      
+      //plunger->rigidBody->proceedToTransform(trans);
+
   }
 
   bumperOne->Update( dt,movement,false);
