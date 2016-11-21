@@ -465,3 +465,7 @@ bool Graphics::setShaderProgram(int index){
 
   return true;
 }
+
+void Graphics::moveCamera(int id){
+  m_camera->setView(id);
+}

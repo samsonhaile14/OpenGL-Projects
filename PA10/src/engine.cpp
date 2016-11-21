@@ -122,6 +122,30 @@ void Engine::Keyboard()
       m_graphics->setShaderProgram(1);
     }
 
+    else if (m_event.key.keysym.sym == SDLK_2)
+    {
+      m_graphics->moveCamera(1);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_3)
+    {
+      m_graphics->moveCamera(2);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_4)
+    {
+      m_graphics->moveCamera(3);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_5)
+    {
+      m_graphics->moveCamera(4);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_6)
+    {
+      m_graphics->moveCamera(5);
+    }
   }
 
   else if(m_event.type == SDL_KEYUP){

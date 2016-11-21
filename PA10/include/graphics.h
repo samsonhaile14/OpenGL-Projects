@@ -19,6 +19,7 @@ class Graphics
     void Render();
     bool loadShaderProgram(const char *fileVS, const char *fileFS);
     bool setShaderProgram(int index);
+    void moveCamera(int id);
 
   private:
     std::string ErrorString(GLenum error);
