@@ -14,6 +14,9 @@ Graphics::Graphics(float dimness, float ambDimness )
 
 g_dimness = dimness;
 g_ambDimness = ambDimness;
+g_specDimness = 1.0;
+g_cutoffAngle = 0.65;
+g_spotlightIntensity = 1.0;
 
 }
 
@@ -291,7 +294,7 @@ void Graphics::Update(unsigned int dt, float movement[])
   // update lighting
   glm::mat4 ballMatrix = ball->GetModel();
   glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
-  lightPos.x = -ballPosition.z+4;
+  lightPos.x = -ballPosition.z+6.5;
   lightPos.y = ballPosition.y+3;
   lightPos.z = ballPosition.x;
   lightPos.a = 1.0;
@@ -310,6 +313,9 @@ void Graphics::Render()
   glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
   glUniform1f( l_dimness, g_dimness );
   glUniform1f( l_ambDimness, g_ambDimness );
+  glUniform1f( l_specDimness, g_specDimness );
+  glUniform1f( l_cutoffAngle, g_cutoffAngle );
+  glUniform1f( l_spotlightIntensity, g_spotlightIntensity );
 
   // Send in the projection and view to the shader
   glUniformMatrix4fv(m_projectionMatrix, 1, GL_FALSE, glm::value_ptr(m_camera->GetProjection())); 
@@ -424,17 +430,20 @@ bool Graphics::setShaderProgram(int index){
   // set new shader
   m_shader = m_shaderArr[index];
 
-  // reassignm uniform locations
+  // reassignn uniform locations
   l_amb = m_shader->GetUniformLocation("AmbientProduct");
   l_dif = m_shader->GetUniformLocation("DiffuseProduct");
   l_spec = m_shader->GetUniformLocation("SpecularProduct");
 
   l_shininess = m_shader->GetUniformLocation("Shininess");
   l_lightPos = m_shader->GetUniformLocation("LightPosition");
+  l_specDimness = m_shader->GetUniformLocation("SpecularDimness");
 
   l_dimness = m_shader->GetUniformLocation("Dimness");
   l_ambDimness = m_shader->GetUniformLocation("AmbientDimness");
   
+  l_cutoffAngle = m_shader->GetUniformLocation("CutoffAngle");
+  l_spotlightIntensity = m_shader->GetUniformLocation("SpotlightIntensity");
 
   // Locate the projection matrix in the shader
   m_projectionMatrix = m_shader->GetUniformLocation("projectionMatrix");
@@ -468,4 +477,24 @@ bool Graphics::setShaderProgram(int index){
 
 void Graphics::moveCamera(int id){
   m_camera->setView(id);
+}
+
+void Graphics::addAmbientDim(float val){
+  if( g_ambDimness+val > 0.00 && g_ambDimness+val < 3.00 )
+    g_ambDimness += val;
+}
+
+void Graphics::addSpecularDim(float val){
+  if( g_specDimness+val > 0.00 && g_specDimness+val < 3.00 )
+    g_specDimness += val;
+}
+
+void Graphics::adjustSpotlightRadius(float val){
+  if( g_cutoffAngle+val > 0.05 && g_cutoffAngle+val < 0.95 )
+    g_cutoffAngle += val;
+}
+
+void Graphics::adjustSpotlightIntensity(float val){
+  if( g_spotlightIntensity+val > 0.05 && g_spotlightIntensity+val < 2.00 )
+    g_spotlightIntensity += val;
 }

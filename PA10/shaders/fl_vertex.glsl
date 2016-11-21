@@ -13,11 +13,13 @@
           out vec2 TexCoord;
           out float dim;
           out float AmDim;
+          out float SpDim;
 
           uniform mat4 projectionMatrix; 
           uniform mat4 viewMatrix; 
           uniform mat4 modelMatrix; 
           uniform vec4 LightPosition; 
+          uniform float SpecularDimness;
 
           uniform float Dimness;
           uniform float AmbientDimness;
@@ -37,4 +39,5 @@
     TexCoord = v_uv; 
     dim = Dimness;
     AmDim = AmbientDimness;
+    SpDim = SpecularDimness;
 }

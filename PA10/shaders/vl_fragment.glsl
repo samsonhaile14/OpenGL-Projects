@@ -7,7 +7,9 @@
           
           out vec4 frag_color; 
           
+          uniform float CutoffAngle;
           uniform sampler2D gSampler;
+          uniform float SpotlightIntensity;
           
           void main(void) 
           { 
@@ -15,7 +17,9 @@
              frag_color = color * texColor;
 
              // check if outside of spotlight (?)
-             if( dot(normalize(light), normalize(vec3(0.0,1.0,0.0))) < 0.65 )
+             if( dot(normalize(light), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle )
                frag_color /= 10;
+             else
+               frag_color *= SpotlightIntensity;
           } 
 

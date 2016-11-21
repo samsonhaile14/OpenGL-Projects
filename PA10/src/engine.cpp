@@ -111,7 +111,7 @@ void Engine::Keyboard()
       movement[1] = 0.0;
     }
 
-
+    // shaders
     else if (m_event.key.keysym.sym == SDLK_v)
     {
       m_graphics->setShaderProgram(0);
@@ -122,6 +122,50 @@ void Engine::Keyboard()
       m_graphics->setShaderProgram(1);
     }
 
+    // lighting changes
+    else if (m_event.key.keysym.sym == SDLK_EQUALS)
+    {
+      m_graphics->addAmbientDim(-0.05f);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_MINUS)
+    {
+      m_graphics->addAmbientDim(0.05f);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_RIGHTBRACKET)
+    {
+      m_graphics->addSpecularDim(-0.05f);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_LEFTBRACKET)
+    {
+      m_graphics->addSpecularDim(0.05f);
+    }
+
+    // spotlight changes
+    else if (m_event.key.keysym.sym == SDLK_SEMICOLON)
+    {
+      m_graphics->adjustSpotlightRadius(0.01f);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_QUOTE)
+    {
+      m_graphics->adjustSpotlightRadius(-0.01f);
+    }
+
+    else if (m_event.key.keysym.sym == SDLK_PERIOD)
+    {
+      m_graphics->adjustSpotlightIntensity(-0.05f);
+    }
+
+
+    else if (m_event.key.keysym.sym == SDLK_SLASH)
+    {
+      m_graphics->adjustSpotlightIntensity(0.05f);
+    }
+
+    // camera viewpoints
     else if (m_event.key.keysym.sym == SDLK_2)
     {
       m_graphics->moveCamera(1);

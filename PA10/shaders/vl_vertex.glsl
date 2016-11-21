@@ -12,6 +12,7 @@
           uniform vec4 AmbientProduct, DiffuseProduct, SpecularProduct; 
           uniform vec4 LightPosition; 
           uniform float Shininess; 
+          uniform float SpecularDimness;
 
           uniform float Dimness;
           uniform float AmbientDimness;
@@ -45,7 +46,7 @@
             float Kd = max( dot(L,N),0.0 ); 
             vec4 diffuse = Kd * DiffuseProduct; 
             float Ks = pow( max(dot(N,H),0.0), Shininess ); 
-            vec4 specular = Ks * SpecularProduct; 
+            vec4 specular = Ks * SpecularProduct/SpecularDimness;
             gl_Position = (projectionMatrix * viewMatrix * modelMatrix) * vec4(v_position,1.0); 
             
             color = (ambient + diffuse + specular)/Dimness; 

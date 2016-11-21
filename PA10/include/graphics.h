@@ -20,6 +20,10 @@ class Graphics
     bool loadShaderProgram(const char *fileVS, const char *fileFS);
     bool setShaderProgram(int index);
     void moveCamera(int id);
+    void addAmbientDim(float val);
+    void addSpecularDim(float val);
+    void adjustSpotlightRadius(float val);
+    void adjustSpotlightIntensity(float val);
 
   private:
     std::string ErrorString(GLenum error);
@@ -41,6 +45,10 @@ class Graphics
 
     GLint l_dimness;
     GLint l_ambDimness;
+    GLint l_specDimness;
+
+    GLint l_cutoffAngle;
+    GLint l_spotlightIntensity;
 
     GLint gSampler;
 
@@ -54,6 +62,9 @@ class Graphics
 
     glm::vec4 lightPos;
     float g_dimness, g_ambDimness;
+    float g_specDimness;
+    float g_cutoffAngle;
+    float g_spotlightIntensity;
 
     //collision variables
     btBroadphaseInterface *broadphase;
