@@ -28,7 +28,13 @@
           vec3 pos = ( ModelView * vec4(v_position,1.0) ).xyz; 
           
           vec3 L = normalize(LightPosition.xyz - pos); 
-          light = L;
+
+          light = LightPosition.xyz;
+    
+          if( LightPosition.w != 0.0 ) {
+         	light = LightPosition.xyz - v_position.xyz;
+          }
+
           vec3 E = normalize(-pos); 
           vec3 H = normalize(L + E); 
           

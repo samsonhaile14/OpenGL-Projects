@@ -15,7 +15,7 @@
              frag_color = color * texColor;
 
              // check if outside of spotlight (?)
-//             if( dot(light, normalize(vec3(0.0,1.0,0.0))) < 0.65 )
-//               frag_color /= 10;
+             if( dot(normalize(light), normalize(vec3(0.0,1.0,0.0))) < 0.65 )
+               frag_color /= 10;
           } 
 
