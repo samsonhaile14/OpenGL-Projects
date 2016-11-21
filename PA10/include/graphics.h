@@ -59,6 +59,7 @@ class Graphics
     Object *bumperTwo;
     Object *bumperThree;
     Object *ball;
+    Object *plunger;
 
     glm::vec4 lightPos;
     float g_dimness, g_ambDimness;

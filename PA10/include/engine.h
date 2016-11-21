@@ -32,7 +32,7 @@ class Engine
 
     Graphics *m_graphics;
 
-    float movement[2] = {0.0f,0.0f}; 
+    float movement[4] = {0.0f,0.0f, 0.0f, 0.0f}; 
     bool pause = false; 
 
 

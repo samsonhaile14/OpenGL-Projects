@@ -149,6 +149,11 @@ bool Graphics::Initialize(int width, int height)
                      0.0,0.0,0.0,
                      1.0, 1,"../objects/sphere.obj");
 
+  
+   plunger = new Object(-11.5f,0.0f,-6.0f,
+                     0.0,0.0,0.0,
+                     1.0, 1,"../objects/plunger.obj");
+
   SLOPE = 0.1;
   dynamicsWorld->setGravity(btVector3(0.0,-9.81,-1.0 * SLOPE));
 
@@ -163,6 +168,7 @@ bool Graphics::Initialize(int width, int height)
   dynamicsWorld->addRigidBody(ball->rigidBody,COL_BALL, ballCollide);
   dynamicsWorld->addRigidBody(lFlipper->rigidBody,COL_WALL,COL_BALL);
   dynamicsWorld->addRigidBody(rFlipper->rigidBody,COL_WALL,COL_BALL);
+  dynamicsWorld->addRigidBody(plunger->rigidBody,COL_WALL,COL_BALL);
 
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -188,6 +194,10 @@ bool Graphics::Initialize(int width, int height)
 
   rFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
   rFlipper->rigidBody->setLinearFactor( btVector3( 0.0,0.0,0.0 ));
+
+  plunger->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  plunger->rigidBody->setLinearFactor( btVector3( 0.0,0.0,0.0 ));
+  plunger->rigidBody->setAngularFactor ( btVector3( 0.0,0.0,0.0 ));
 
 
   // Set up the shaders
@@ -279,6 +289,39 @@ void Graphics::Update(unsigned int dt, float movement[])
       rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
   }
 
+
+  
+  // plunger data
+  plunger->rigidBody->getMotionState()->getWorldTransform(trans);
+  btVector3 depr = trans.getOrigin();
+
+  //basis.getEulerZYX(yaw,pitch,roll);
+
+  //spacebar is depressed 
+  if(movement[2] == 1){
+      if ( depr.getZ() > -12.0 ) {
+          plunger->rigidBody->setLinearVelocity (btVector3 (0.0, 0.0, -0.1));
+          movement[3] += 0.01;
+      }
+      else
+          plunger->rigidBody->setLinearVelocity (btVector3 (0.0, 0.0, 0.0));
+  }
+  
+  //spacebar is released
+  else if (movement[2] == -1){
+      plunger->rigidBody->setLinearVelocity (btVector3 (0.0, 0.0, movement[3]));
+      movement[2] = 0;
+  }
+
+  // in motion or in standstill
+  else{
+      if (depr.getZ() > -4) {
+          plunger->rigidBody->setLinearVelocity (btVector3 (0.0, 0.0, 0.0));
+          movement[3] = 0.0;
+      }
+      
+  }
+
   bumperOne->Update( dt,movement,false);
   bumperTwo->Update( dt,movement,false);
   bumperThree->Update( dt,movement,false);
@@ -286,7 +329,7 @@ void Graphics::Update(unsigned int dt, float movement[])
   board->Update( dt, movement, false);
 
   ball->Update(dt,movement,false);
-  //cube->Update(dt,movement,false);
+  plunger->Update(dt,movement,false);
   lFlipper->Update(dt,movement,false);
   rFlipper->Update(dt,movement,false);
 
@@ -342,6 +385,9 @@ void Graphics::Render()
 
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(rFlipper->GetModel()));
   rFlipper->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+
+  glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(plunger->GetModel()));
+  plunger->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
   // Get any errors from OpenGL
   auto error = glGetError();

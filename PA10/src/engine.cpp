@@ -111,6 +111,11 @@ void Engine::Keyboard()
       movement[1] = 0.0;
     }
 
+    else if (m_event.key.keysym.sym == SDLK_SPACE)
+    {
+      movement[2] = 1.0;
+    }
+
     // shaders
     else if (m_event.key.keysym.sym == SDLK_v)
     {
@@ -202,6 +207,12 @@ void Engine::Keyboard()
     {
       movement[1] = 0.0;
     }
+
+    else if (m_event.key.keysym.sym == SDLK_SPACE)
+    {
+      movement[2] = -1.0;
+    }
+
 
   }
 }
