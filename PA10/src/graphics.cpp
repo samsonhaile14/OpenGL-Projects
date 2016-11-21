@@ -217,66 +217,84 @@ bool Graphics::Initialize(int width, int height)
 void Graphics::Update(unsigned int dt, float movement[])
 {
 
-dynamicsWorld->stepSimulation(dt,5);
+  dynamicsWorld->stepSimulation(dt,5);
 
-btTransform trans;
-btQuaternion rot;
+  btTransform trans;
+  btQuaternion rot;
 
-float leverPower = 20.0;
+  float leverPower = 20.0;
+  float flipperSpeed = 5.0;
+  btScalar yaw, pitch, roll;
 
-if(movement[0] > 0){   
-
+  // left flipper data
   lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
   btMatrix3x3 basis = trans.getBasis();
-  btScalar yaw, pitch, roll;
   basis.getEulerZYX(yaw,pitch,roll);
-printf("%f, %f, %f\r\n", yaw, pitch, roll);
+  
+  // left flipper key pressed
+  if(movement[0] > 0){   
+
   if( pitch < 0.4)
-    lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,5.0,0.0 ));
+    lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,flipperSpeed,0.0 ));
 
-}
+  else if( pitch > 0.4 )
+    lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
+  }  
 
-else{
+  // left flipper key not pressed
+  else{
 
-  lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
-}
+    if( pitch > 0.4)
+      lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,-flipperSpeed,0.0 ));
 
+    else if( pitch < -0.12 )
+      lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
+  }
 
-if(movement[1] > 0){
-
+  // right flipper data
   rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
-  btMatrix3x3 basis = trans.getBasis();
-  btScalar yaw, pitch, roll;
+  basis = trans.getBasis();
   basis.getEulerZYX(yaw,pitch,roll);
-//printf("%f, %f, %f\r\n", yaw, pitch, roll);
-  if( pitch < 0.4)
-    rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,-5.0,0.0 ));
+
+  // right flipper key pressed
+  if(movement[1] > 0){
+
+    if( pitch < 0.4)
+      rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,-flipperSpeed,0.0 ));
+
+    else if( pitch > 0.12 )
+      rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
+  }
 
 
-}
+  // not pressed
+  else{
+ 
+    if( pitch > 0.4)
+      rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,flipperSpeed,0.0 ));
 
-else{
-    rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
-}
+    else if( pitch < -0.12 )
+      rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
+  }
 
-bumperOne->Update( dt,movement,false);
-bumperTwo->Update( dt,movement,false);
-bumperThree->Update( dt,movement,false);
+  bumperOne->Update( dt,movement,false);
+  bumperTwo->Update( dt,movement,false);
+  bumperThree->Update( dt,movement,false);
 
-board->Update( dt, movement, false);
+  board->Update( dt, movement, false);
 
-ball->Update(dt,movement,false);
-//cube->Update(dt,movement,false);
-lFlipper->Update(dt,movement,false);
-rFlipper->Update(dt,movement,false);
+  ball->Update(dt,movement,false);
+  //cube->Update(dt,movement,false);
+  lFlipper->Update(dt,movement,false);
+  rFlipper->Update(dt,movement,false);
 
-// update lighting
-glm::mat4 ballMatrix = ball->GetModel();
-glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
-lightPos.x = -ballPosition.z+4;
-lightPos.y = ballPosition.y+3;
-lightPos.z = ballPosition.x;
-lightPos.a = 1.0;
+  // update lighting
+  glm::mat4 ballMatrix = ball->GetModel();
+  glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
+  lightPos.x = -ballPosition.z+4;
+  lightPos.y = ballPosition.y+3;
+  lightPos.z = ballPosition.x;
+  lightPos.a = 1.0;
 }
 
 void Graphics::Render()
