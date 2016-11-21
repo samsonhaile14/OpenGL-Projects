@@ -3,6 +3,8 @@
 	// per-fragment interpolated values from the vertex shader
 	in vec3 fN;
 	in vec3 fL;
+   in vec3 fLB;
+   in vec3 fLC;
 	in vec3 fE;
         in vec2 TexCoord;
         in float dim;
@@ -47,7 +49,9 @@
           frag_color = frag_color * texColor;
 
           // check if outside spotlight range
-          if( dot(L, normalize(vec3(0.0,1.0,0.0))) < CutoffAngle )
+          if( dot(L, normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
+              dot(normalize(fLB), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
+              dot(normalize(fLC), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle )
             frag_color /= 10;
           else
             frag_color *= SpotlightIntensity;

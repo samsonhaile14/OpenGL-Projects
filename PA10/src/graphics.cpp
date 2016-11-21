@@ -242,6 +242,13 @@ void Graphics::Update(unsigned int dt, float movement[])
   lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
   btMatrix3x3 basis = trans.getBasis();
   basis.getEulerZYX(yaw,pitch,roll);
+
+  lightPosB.x = trans.getOrigin().getZ()+20.0;
+  lightPosB.y = trans.getOrigin().getY()+3.0;
+  lightPosB.z = trans.getOrigin().getX();
+  lightPosB.a = 1.0;
+
+
   
   // left flipper key pressed
   if(movement[0] > 0){   
@@ -267,6 +274,12 @@ void Graphics::Update(unsigned int dt, float movement[])
   rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
   basis = trans.getBasis();
   basis.getEulerZYX(yaw,pitch,roll);
+
+  lightPosC.x = trans.getOrigin().getZ()+20.0;
+  lightPosC.y = trans.getOrigin().getY()+3.0;
+  lightPosC.z = trans.getOrigin().getX();
+  lightPosC.a = 1.0;
+
 
   // right flipper key pressed
   if(movement[1] > 0){
@@ -353,6 +366,8 @@ void Graphics::Render()
 
   //set light position and brightness
   glUniform4fv( l_lightPos, 1, glm::value_ptr(lightPos) );
+  glUniform4fv( l_lightPosB, 1, glm::value_ptr(lightPosB) );
+  glUniform4fv( l_lightPosC, 1, glm::value_ptr(lightPosC) );
   glUniform1f( l_dimness, g_dimness );
   glUniform1f( l_ambDimness, g_ambDimness );
   glUniform1f( l_specDimness, g_specDimness );
@@ -482,6 +497,10 @@ bool Graphics::setShaderProgram(int index){
 
   l_shininess = m_shader->GetUniformLocation("Shininess");
   l_lightPos = m_shader->GetUniformLocation("LightPosition");
+  l_lightPosB = m_shader->GetUniformLocation("LightPositionB");
+  l_lightPosC = m_shader->GetUniformLocation("LightPositionC");
+
+
   l_specDimness = m_shader->GetUniformLocation("SpecularDimness");
 
   l_dimness = m_shader->GetUniformLocation("Dimness");

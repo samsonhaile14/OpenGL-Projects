@@ -41,6 +41,8 @@ class Graphics
     GLint m_modelMatrix;
 
     GLint l_lightPos;
+    GLint l_lightPosB;
+    GLint l_lightPosC;
     GLint l_shininess;
 
     GLint l_dimness;
@@ -62,6 +64,8 @@ class Graphics
     Object *plunger;
 
     glm::vec4 lightPos;
+    glm::vec4 lightPosB;
+    glm::vec4 lightPosC;
     float g_dimness, g_ambDimness;
     float g_specDimness;
     float g_cutoffAngle;
