@@ -164,6 +164,7 @@ bool Graphics::Initialize(int width, int height)
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
   board->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
   bumperOne->rigidBody->setCollisionFlags(bumperOne->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
   bumperOne->rigidBody->setActivationState(DISABLE_DEACTIVATION);
@@ -177,15 +178,13 @@ bool Graphics::Initialize(int width, int height)
   bumperThree->rigidBody->setActivationState(DISABLE_DEACTIVATION);
 
 
-  lFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
-  rFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
   ball->rigidBody->setActivationState(DISABLE_DEACTIVATION);
 
+  lFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  lFlipper->rigidBody->setLinearFactor( btVector3( 0.0,0.0,0.0 ));
 
-  lFlipper->rigidBody->setLinearFactor( btVector3( 0,1,0 ) );
-  lFlipper->rigidBody->setAngularFactor( btVector3( 1,1,1 ) );
-  rFlipper->rigidBody->setLinearFactor( btVector3( 0,1,0 ) );
-  rFlipper->rigidBody->setAngularFactor( btVector3( 1,1,1 ) );
+  rFlipper->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  rFlipper->rigidBody->setLinearFactor( btVector3( 0.0,0.0,0.0 ));
 
 
   // Set up the shaders
@@ -227,71 +226,37 @@ float leverPower = 20.0;
 
 if(movement[0] > 0){   
 
-   lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
-
-
-   if( trans.getOrigin().getZ() < -4.0 ){
-   lFlipper->rigidBody->applyTorque( btVector3( leverPower+SLOPE,0.0,0.0 )  );
-   //lFlipper->rigidBody->setAngularVelocity( btVector3( 10.0,1.0,0.0 )  );   
-   }
-
-   else{
-   lFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );
-   }
-
-   printf( "at: %f %d\n", lFlipper->rigidBody->getTotalTorque().getX(), dt);
-   printf( "av: %f %d\n", lFlipper->rigidBody->getAngularVelocity().getX(), dt);
+  lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
+  btMatrix3x3 basis = trans.getBasis();
+  btScalar yaw, pitch, roll;
+  basis.getEulerZYX(yaw,pitch,roll);
+printf("%f, %f, %f\r\n", yaw, pitch, roll);
+  if( pitch < 0.4)
+    lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,5.0,0.0 ));
 
 }
 
 else{
 
-   lFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
-
-   rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 48.0,0.0 );
-
-   if( trans.getOrigin().getZ() > -6.0 ){
-   lFlipper->rigidBody->applyTorque( btVector3( -1.0*leverPower-SLOPE,0.0,0.0 )  );
-   //lFlipper->rigidBody->setAngularVelocity( btVector3( -10.0,0.0,0.0 )  );   
-   }
-
-   else{
-   lFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
-   }
-
+  lFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
 }
 
 
 if(movement[1] > 0){
-   rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
 
-   rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 2.0 - (2.0 * 3.141592) / 48.0,0.0  );
+  rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
+  btMatrix3x3 basis = trans.getBasis();
+  btScalar yaw, pitch, roll;
+  basis.getEulerZYX(yaw,pitch,roll);
+//printf("%f, %f, %f\r\n", yaw, pitch, roll);
+  if( pitch < 0.4)
+    rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,-5.0,0.0 ));
 
-   if( trans.getOrigin().getZ() < -4.0 ){
-   rFlipper->rigidBody->applyTorque( btVector3( leverPower+SLOPE,0.0,0.0 )  );
-   //rFlipper->rigidBody->setAngularVelocity( btVector3( 10.0,0.0,0.0 )  );   
-   }
-
-   else{
-   rFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
-   }
 
 }
 
 else{
-   rFlipper->rigidBody->getMotionState()->getWorldTransform(trans);
-
-   rot.setEulerZYX( 0.0,(2.0 * 3.141592) / 2.0 + (2.0 * 3.141592) / 12.0,0.0  );
-
-   if( trans.getOrigin().getZ() > -6.0 ){
-   rFlipper->rigidBody->applyTorque( btVector3( -1.0*leverPower-SLOPE,0.0,0.0 )  );
-   //rFlipper->rigidBody->setAngularVelocity( btVector3( -10.0,0.0,0.0 )  );   
-   }
-
-   else{
-   rFlipper->rigidBody->setAngularVelocity( btVector3( SLOPE,0.0,0.0 )  );   
-   }
-
+    rFlipper->rigidBody->setAngularVelocity( btVector3( 0.0,0.0,0.0 ));
 }
 
 bumperOne->Update( dt,movement,false);
@@ -308,9 +273,6 @@ rFlipper->Update(dt,movement,false);
 // update lighting
 glm::mat4 ballMatrix = ball->GetModel();
 glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
-//glm::vec4 lightBase = glm::vec4(0.0, 3.0, 10.0, 1.0);
-
-/* works for fragment lighting, unknown for per vertex lighting */
 lightPos.x = -ballPosition.z+4;
 lightPos.y = ballPosition.y+3;
 lightPos.z = ballPosition.x;
