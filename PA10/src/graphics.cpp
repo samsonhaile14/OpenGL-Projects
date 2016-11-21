@@ -18,7 +18,7 @@ g_specDimness = 1.0;
 g_cutoffAngle = 0.65;
 g_spotlightIntensity = 1.0;
 score = 0;
-lives = 3;
+lives = 4;
 isGameOver = false;
 
 }
@@ -342,17 +342,31 @@ void Graphics::Update(unsigned int dt, float movement[])
   ball->rigidBody->getMotionState()->getWorldTransform(trans);
   btVector3 balLoc = trans.getOrigin();
 
-  if (balLoc.getZ() < -12.5){
-      trans.setIdentity();
-      trans.setOrigin(btVector3 (-12.0,-0.25,-6.0) );
+  if (balLoc.getZ() < -11.0 and lives >= 0){
 
-      plunger->rigidBody->setWorldTransform(trans);
-      plunger->rigidBody->getMotionState()->setWorldTransform(trans);
+     
+
+      if( lives <= 0 ){
+          printf("GAME OVER.\r\nFINAL SCORE: %d\r\n", score);
+      }
+      else{
+          lives -= 1;      
+          trans.setIdentity();
+     	 trans.setOrigin(btVector3 (-12.0,-0.25,-6.0) );
+
+    	  plunger->rigidBody->setWorldTransform(trans);
+    	  plunger->rigidBody->getMotionState()->setWorldTransform(trans);
  
 
-      trans.setOrigin(btVector3 (-12.0,0.6,-2.4) );
-      ball->rigidBody->setWorldTransform(trans);
-      ball->rigidBody->getMotionState()->setWorldTransform(trans);
+     	 trans.setOrigin(btVector3 (-12.0,0.6,-2.4) );
+      	ball->rigidBody->setWorldTransform(trans);
+     	 ball->rigidBody->getMotionState()->setWorldTransform(trans);
+          printf("Lives left: %d\r\n", lives );
+
+      }
+      
+      
+      
 
   }
 
@@ -370,20 +384,6 @@ void Graphics::Update(unsigned int dt, float movement[])
   // check if life lost
   glm::mat4 ballMatrix = ball->GetModel();
   glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
-
-  if( ballPosition.z < -10.0 && lives <= 0 ){
-    --lives;
-    if( lives <= 0 ){
-      printf("GAME OVER.\r\nFINAL SCORE: %d\r\n", score);
-    }
-    else{
-      printf("Lives left: %d\r\n", lives);
-      ballMatrix[3].x = -12.0;
-      ballMatrix[3].y = 0.6;
-      ballMatrix[3].z = -2.4;
-      ball->setModel(ballMatrix);
-    }
-  }
 
   // update lighting
   lightPos.x = -ballPosition.z+6.5;
@@ -458,6 +458,7 @@ void Graphics::Update(unsigned int dt, float movement[])
       printf("Score: %d\r\n", score);
     } 
    }
+
 }
 
 void Graphics::Render()
@@ -669,13 +670,17 @@ void Graphics::adjustSpotlightIntensity(float val){
 }
 
 void Graphics::resetGame(){
-  glm::mat4 ballMatrix = ball->GetModel();
+      btTransform trans;
+      trans.setIdentity();
+      trans.setOrigin(btVector3 (-12.0,-0.25,-6.0) );
 
-  ballMatrix[3].x = -12.0;
-  ballMatrix[3].y = 0.6;
-  ballMatrix[3].z = -2.4;
+      plunger->rigidBody->setWorldTransform(trans);
+      plunger->rigidBody->getMotionState()->setWorldTransform(trans);
+ 
 
-  ball->setModel(ballMatrix);
+      trans.setOrigin(btVector3 (-12.0,0.6,-2.4) );
+      ball->rigidBody->setWorldTransform(trans);
+      ball->rigidBody->getMotionState()->setWorldTransform(trans);
 
   lives = 3;
   score = 0;
