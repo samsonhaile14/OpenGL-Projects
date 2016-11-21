@@ -22,7 +22,7 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
 
   // loop through meshes
   int totalMeshVerts = 0;
-  for( int i = 0; i < object->mNumMeshes; ++i ){
+  for( unsigned int i = 0; i < object->mNumMeshes; ++i ){
 
     // get mesh array
     aiMesh *mesh = object->mMeshes[i];
@@ -50,6 +50,8 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
        Magick::Blob m_blob;
        GLuint texObj;
        aiReturn texFound = material->GetTexture( aiTextureType_DIFFUSE, 0, &texFileName );
+       if( texFound != 0 )
+         printf("An error occured while getting textures. Code: %d\r\n", texFound);
 
        try {
           Magick::Image skin;
@@ -79,7 +81,7 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // read vertex values and store in VBO
-    for( int j = 0; j < mesh->mNumVertices; ++j ){
+    for( unsigned int j = 0; j < mesh->mNumVertices; ++j ){
       aiVector3D vertex = mesh->mVertices[j];
 
       aiVector3D uv = mesh->mTextureCoords[0][j];
@@ -94,12 +96,12 @@ Object::Object(float x, float y, float z,float rx, float ry, float rz,float m_ma
 
     // get face values
     indicesStart.push_back( Indices.size());
-    for( int j = 0; j < mesh->mNumFaces; ++j ){
+    for( unsigned int j = 0; j < mesh->mNumFaces; ++j ){
 
       aiFace face = mesh->mFaces[j];
       btVector3 triArray[3];
 
-      for( int k = 0; k < face.mNumIndices; ++k ){
+      for( unsigned int k = 0; k < face.mNumIndices; ++k ){
         
         Indices.push_back( face.mIndices[k] + totalMeshVerts );
         triArray[k] = btVector3(Vertices[face.mIndices[k]+totalMeshVerts].vertex.x,
@@ -222,7 +224,7 @@ glm::mat4 Object::GetModel()
 void Object::Render(GLint gSampler, GLint gAmb, GLint gDif, GLint gSpe, GLint shine)
 {
 
-  int indx;
+  unsigned int indx;
 
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);

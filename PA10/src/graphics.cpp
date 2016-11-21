@@ -225,7 +225,6 @@ void Graphics::Update(unsigned int dt, float movement[])
   btTransform trans;
   btQuaternion rot;
 
-  float leverPower = 20.0;
   float flipperSpeed = 5.0;
   btScalar yaw, pitch, roll;
 
@@ -422,7 +421,7 @@ bool Graphics::loadShaderProgram(const char *fileVS, const char *fileFS){
 bool Graphics::setShaderProgram(int index){
 
   // error check
-  if( index < 0 || index >= m_shaderArr.size() ){
+  if( index < 0 || (unsigned int)index >= m_shaderArr.size() ){
     printf("Error: shader list index %d out of range.\r\n", index);
     return false;
   }
