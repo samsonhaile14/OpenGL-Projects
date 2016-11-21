@@ -17,6 +17,9 @@ g_ambDimness = ambDimness;
 g_specDimness = 1.0;
 g_cutoffAngle = 0.65;
 g_spotlightIntensity = 1.0;
+score = 0;
+lives = 3;
+isGameOver = false;
 
 }
 
@@ -333,13 +336,97 @@ void Graphics::Update(unsigned int dt, float movement[])
   lFlipper->Update(dt,movement,false);
   rFlipper->Update(dt,movement,false);
 
-  // update lighting
+  // check if life lost
   glm::mat4 ballMatrix = ball->GetModel();
   glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
+
+  if( ballPosition.z < -10.0 && lives <= 0 ){
+    --lives;
+    if( lives <= 0 ){
+      printf("GAME OVER.\r\nFINAL SCORE: %d\r\n", score);
+    }
+    else{
+      printf("Lives left: %d\r\n", lives);
+      ballMatrix[3].x = -12.0;
+      ballMatrix[3].y = 0.6;
+      ballMatrix[3].z = -2.4;
+      ball->setModel(ballMatrix);
+    }
+  }
+
+  // update lighting
   lightPos.x = -ballPosition.z+6.5;
   lightPos.y = ballPosition.y+3;
   lightPos.z = ballPosition.x;
   lightPos.a = 1.0;
+
+
+  // update score
+  int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+  for( int i = 0; i < numManifolds; ++i ){
+    btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+
+
+    const btCollisionObject *obA = contactManifold->getBody0();
+    const btTransform transA = obA->getWorldTransform();
+    const btVector3 originA = transA.getOrigin();
+
+    const btCollisionObject *obB = contactManifold->getBody1();
+    const btTransform transB = obB->getWorldTransform();
+    const btVector3 originB = transB.getOrigin();
+
+    // check if any collision for bumper one detected
+    if( originA.getX() == bumperOne->globalPos.x 
+        &&  originA.getY() == bumperOne->globalPos.y 
+        &&  originA.getZ() == bumperOne->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+
+    if( originB.getX() == bumperOne->globalPos.x 
+        &&  originB.getY() == bumperOne->globalPos.y 
+        &&  originB.getZ() == bumperOne->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+
+    // check if any collision for bumper two detected
+    if( originA.getX() == bumperTwo->globalPos.x 
+        &&  originA.getY() == bumperTwo->globalPos.y 
+        &&  originA.getZ() == bumperTwo->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+
+    if( originB.getX() == bumperTwo->globalPos.x 
+        &&  originB.getY() == bumperTwo->globalPos.y 
+        &&  originB.getZ() == bumperTwo->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+
+
+    // check if any collision for bumper three detected
+    if( originA.getX() == bumperThree->globalPos.x 
+        &&  originA.getY() == bumperThree->globalPos.y 
+        &&  originA.getZ() == bumperThree->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+
+    if( originB.getX() == bumperThree->globalPos.x 
+        &&  originB.getY() == bumperThree->globalPos.y 
+        &&  originB.getZ() == bumperThree->globalPos.z )
+    {
+      score += 10;
+      printf("Score: %d\r\n", score);
+    } 
+   }
 }
 
 void Graphics::Render()
@@ -543,3 +630,17 @@ void Graphics::adjustSpotlightIntensity(float val){
   if( g_spotlightIntensity+val > 0.05 && g_spotlightIntensity+val < 2.00 )
     g_spotlightIntensity += val;
 }
+
+void Graphics::resetGame(){
+  glm::mat4 ballMatrix = ball->GetModel();
+
+  ballMatrix[3].x = -12.0;
+  ballMatrix[3].y = 0.6;
+  ballMatrix[3].z = -2.4;
+
+  ball->setModel(ballMatrix);
+
+  lives = 3;
+  score = 0;
+}
+

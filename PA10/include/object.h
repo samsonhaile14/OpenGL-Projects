@@ -29,6 +29,8 @@ class Object
 
     void Bind(GLenum TextureUnit, int texIndx);
 
+    void setModel(glm::mat4 m);
+
     glm::mat4 GetModel();
     
     glm::vec3 globalPos;

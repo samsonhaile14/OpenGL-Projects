@@ -265,4 +265,6 @@ void Object::Bind(GLenum TextureUnit, int texIndx){
    glBindTexture(GL_TEXTURE_2D, texObjs[texIndx] );
 }
 
-
+void Object::setModel(glm::mat4 m){
+  model = m;
+}

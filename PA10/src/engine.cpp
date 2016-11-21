@@ -195,6 +195,13 @@ void Engine::Keyboard()
     {
       m_graphics->moveCamera(5);
     }
+
+    // reset game
+    else if (m_event.key.keysym.sym == SDLK_r)
+    {
+      printf("RESET");
+      m_graphics->resetGame();
+    }
   }
 
   else if(m_event.type == SDL_KEYUP){

@@ -24,6 +24,7 @@ class Graphics
     void addSpecularDim(float val);
     void adjustSpotlightRadius(float val);
     void adjustSpotlightIntensity(float val);
+    void resetGame();
 
   private:
     std::string ErrorString(GLenum error);
@@ -78,6 +79,10 @@ class Graphics
     bool clockwise = true;
 
     float SLOPE;
+
+    int score;
+    int lives;
+    bool isGameOver;
 };
 
 #endif /* GRAPHICS_H */
