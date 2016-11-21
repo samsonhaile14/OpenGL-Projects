@@ -39,4 +39,9 @@ F: Switch to fragment lighting shader
 Left Arrow Key: Rotate left flipper  
 Right Arrow Key: Rotate right flipper  
 Down Arrow Key: Return flippers to base position  
-Number keys 2-6: Change viewpoint
+Number keys 2-6: Change viewpoint  
+Period key(.) / Forward Slash key (/): decrease/increase spotlight intensity respectively  
+Semicolon key(;) / Quote key ('): decrease/increase spotlight radius respectively  
+Left Bracket key([) / Right Bracket key (]): decrease/increase dimness of specular light respectively  
+Minus key(-) / Equals key (=): decrease/increase dimness of ambient light respectively  
+
