@@ -122,7 +122,7 @@ bool Graphics::Initialize(int width, int height)
   // Create the objects
    board = new Object(0.0,4.0,6.5, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
-                     0.0, 0,"../objects/box.obj");   //mass,meshtype,objfile
+                     0.0, 0,"../objects/cabinet.obj");   //mass,meshtype,objfile
 
    lFlipper = new Object(5.5,0.0,-6.5, //position
                       0.0,-(2.0 * 3.141592) / 12.0,0.0 , //rotation
@@ -145,7 +145,7 @@ bool Graphics::Initialize(int width, int height)
                           1.0,0,"../objects/bumper.obj" );
 
 
-   ball = new Object(-0.5f,5.0f,8.0,
+   ball = new Object(-11.0f,0.6f,-2.4f,
                      0.0,0.0,0.0,
                      1.0, 1,"../objects/sphere.obj");
 
