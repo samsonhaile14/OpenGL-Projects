@@ -308,8 +308,13 @@ rFlipper->Update(dt,movement,false);
 // update lighting
 glm::mat4 ballMatrix = ball->GetModel();
 glm::vec4 ballPosition = glm::vec4(ballMatrix[3]);
-glm::vec4 lightBase = glm::vec4(0.0, 3.0, 10.0, 1.0);
-lightPos = ballPosition *  lightBase;
+//glm::vec4 lightBase = glm::vec4(0.0, 3.0, 10.0, 1.0);
+
+/* works for fragment lighting, unknown for per vertex lighting */
+lightPos.x = -ballPosition.z+4;
+lightPos.y = ballPosition.y+3;
+lightPos.z = ballPosition.x;
+lightPos.a = 1.0;
 }
 
 void Graphics::Render()

@@ -41,6 +41,10 @@
     	frag_color.a = 1.0;
         vec4 texColor = texture2D( gSampler, TexCoord.st );
         frag_color = frag_color * texColor;
+
+        // check if outside spotlight range
+        if( dot(L, normalize(vec3(0.0,1.0,0.0))) < 0.65 )
+          frag_color /= 10;
 	} 
 
 

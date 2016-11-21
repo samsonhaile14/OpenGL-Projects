@@ -18,6 +18,7 @@
           
           out vec2 TexCoord; 
           out vec4 color; 
+          out vec3 light;
           
           void main(void) 
           { 
@@ -27,6 +28,7 @@
           vec3 pos = ( ModelView * vec4(v_position,1.0) ).xyz; 
           
           vec3 L = normalize(LightPosition.xyz - pos); 
+          light = L;
           vec3 E = normalize(-pos); 
           vec3 H = normalize(L + E); 
           
