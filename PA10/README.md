@@ -44,4 +44,5 @@ Period key(.) / Forward Slash key (/): decrease/increase spotlight intensity res
 Semicolon key(;) / Quote key ('): decrease/increase spotlight radius respectively  
 Left Bracket key([) / Right Bracket key (]): decrease/increase dimness of specular light respectively  
 Minus key(-) / Equals key (=): decrease/increase dimness of ambient light respectively  
+Spacebar: lower plunger
 

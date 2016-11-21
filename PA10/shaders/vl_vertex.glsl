@@ -11,6 +11,9 @@
           
           uniform vec4 AmbientProduct, DiffuseProduct, SpecularProduct; 
           uniform vec4 LightPosition; 
+          uniform vec4 LightPositionB; 
+          uniform vec4 LightPositionC; 
+
           uniform float Shininess; 
           uniform float SpecularDimness;
 
@@ -20,7 +23,9 @@
           out vec2 TexCoord; 
           out vec4 color; 
           out vec3 light;
-          
+          out vec3 lightB;
+          out vec3 lightC;          
+
           void main(void) 
           { 
           
@@ -31,10 +36,21 @@
           vec3 L = normalize(LightPosition.xyz - pos); 
 
           light = LightPosition.xyz;
-    
+          lightB = LightPositionB.xyz;
+          lightC = LightPositionC.xyz;              
+
           if( LightPosition.w != 0.0 ) {
          	light = LightPosition.xyz - v_position.xyz;
           }
+
+          if( LightPositionB.w != 0.0 ) {
+         	lightB = LightPositionB.xyz - v_position.xyz;
+          }
+
+          if( LightPositionC.w != 0.0 ) {
+         	lightC = LightPositionC.xyz - v_position.xyz;
+          }
+
 
           vec3 E = normalize(-pos); 
           vec3 H = normalize(L + E); 
