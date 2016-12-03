@@ -109,7 +109,7 @@ bool Graphics::Initialize(int width, int height)
   // Create the objects
 
 
-   board = new Object(0.0,0.0,0.0, //position
+   board = new Object(0.0,-1.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      0.0, 0,"../objects/board.obj");   //mass,meshtype,objfile
 
@@ -151,7 +151,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   lightPos = glm::vec4( 100.0,-30.0,3.0,1.0 );
+   lightPos = glm::vec4( 0.0,5.0,0.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);

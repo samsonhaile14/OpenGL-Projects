@@ -1,8 +1,13 @@
 #include "camera.h"
+#include <cmath>
 
 Camera::Camera()
 {
+r = 2.0;
+dir = glm::vec3(0.0,0.0,r);
+center = glm::vec3(0.0,2.0,0.0);
 
+turnFactor = 0.05;
 }
 
 Camera::~Camera()
@@ -24,7 +29,7 @@ bool Camera::Initialize(int w, int h)
   projection = glm::perspective( 45.0f, //the FoV typically 90 degrees is good which is what this is set to
                                  float(w)/float(h), //Aspect Ratio, so Circles stay Circular
                                  0.01f, //Distance to the near plane, normally a small value like this
-                                 100.0f); //Distance to the far plane, 
+                                 200.0f); //Distance to the far plane, 
   return true;
 }
 
@@ -40,52 +45,38 @@ glm::mat4 Camera::GetView()
 
 void Camera::setView(int id){
 
-  switch(id){
+glm::mat4 rotation;
+glm::vec4 result;
 
-    // default
-    case 1:
-      view = glm::lookAt( glm::vec3(0.0, 15.0, -15.0), //Eye Position
-                          glm::vec3(0.0, 0.0, 0.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
+//set rotation
+   switch(id){
+      case 1:
+         rotation = glm::rotate(glm::mat4(1.f), turnFactor, glm::vec3(0.0,1.0,0.0));
+         break;
+      
+      case 2:
+         rotation = glm::rotate(glm::mat4(1.f), (-1.0f) * turnFactor, glm::vec3(0.0,1.0,0.0));
+         break;
 
-    // top-down
-    case 2:
-      view = glm::lookAt( glm::vec3(0.0, 80.0, -10.0), //Eye Position
-                          glm::vec3(0.0, 0.0, 0.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
+      case 3:
+         rotation = glm::rotate(glm::mat4(1.f), turnFactor, glm::vec3(1.0,0.0,0.0));
+         break;
 
-    // normal
-    case 3:
-      view = glm::lookAt( glm::vec3(0.0, 30.0, -30.0), //Eye Position
-                          glm::vec3(0.0, 10.0, 5.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
+      case 4:
+         rotation = glm::rotate(glm::mat4(1.f), (-1.0f) * turnFactor, glm::vec3(1.0,0.0,0.0));
+         break;
 
-    // close-up
-    case 4:
-      view = glm::lookAt( glm::vec3(0.0, 8.0, -16.0), //Eye Position
-                          glm::vec3(0.0, 0.0, 0.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
 
-    // bystander view
-    case 5:
-      view = glm::lookAt( glm::vec3(20.0, 20.0, -20.0), //Eye Position
-                          glm::vec3(0.0, 2.0, 15.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
+   }
 
-    // plunger view
-    case 6:
-      view = glm::lookAt( glm::vec3(-10.0, 20.0, -25.0), //Eye Position
-                          glm::vec3(-10.0, -5.0, 10.0), //Focus point
-                          glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
-      break;
+//set result
+   result = rotation * glm::vec4(dir,1.0);
+   dir = glm::vec3(result.x,result.y,result.z);
 
-    default:
-      printf("Error: Bad input. Cannot change camera angle.\r\n");
-      break;
-  }
+
+//change view
+   view = glm::lookAt( center, //Eye Position
+                       center + dir, //Focus point
+                       glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
+
 }

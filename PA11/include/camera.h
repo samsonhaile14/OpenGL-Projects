@@ -16,6 +16,14 @@ class Camera
   private:
     glm::mat4 projection;
     glm::mat4 view;
+    float r;
+
+    float turnFactor;
+
+    float turnDirX,turnDirY;
+
+    glm::vec3 dir;
+    glm::vec3 center;
 };
 
 #endif /* CAMERA_H */
