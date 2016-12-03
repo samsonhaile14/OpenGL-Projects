@@ -5,7 +5,7 @@ Camera::Camera()
 {
 r = 2.0;
 dir = glm::vec3(0.0,0.0,r);
-center = glm::vec3(0.0,2.0,0.0);
+center = glm::vec3(0.0,3.0,0.0);
 
 turnFactor = 0.05;
 }
@@ -66,17 +66,15 @@ glm::vec4 result;
          rotation = glm::rotate(glm::mat4(1.f), (-1.0f) * turnFactor, glm::vec3(1.0,0.0,0.0));
          break;
 
-
    }
 
 //set result
    result = rotation * glm::vec4(dir,1.0);
    dir = glm::vec3(result.x,result.y,result.z);
 
-
 //change view
-   view = glm::lookAt( center, //Eye Position
-                       center + dir, //Focus point
+   view = glm::lookAt( center + dir, //Eye Position
+                       center + dir + dir, //Focus point
                        glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
 
 }
