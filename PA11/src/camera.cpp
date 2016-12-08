@@ -5,6 +5,8 @@ Camera::Camera()
 {
 r = 2.0;
 dir = glm::vec3(0.0,0.0,r);
+up = glm::vec3(0.0,r,0.0);
+horAxis = glm::vec3(1.0,0.0,0.0);
 center = glm::vec3(0.0,3.0,0.0);
 
 turnFactor = 0.05;
@@ -46,7 +48,7 @@ glm::mat4 Camera::GetView()
 void Camera::setView(int id){
 
 glm::mat4 rotation;
-glm::vec4 result;
+glm::vec4 result,resultAxis;
 
 //set rotation
    switch(id){
@@ -59,22 +61,34 @@ glm::vec4 result;
          break;
 
       case 3:
-         rotation = glm::rotate(glm::mat4(1.f), turnFactor, glm::vec3(1.0,0.0,0.0));
+   
+         //if(dir.y > r-r*0.05){
+               rotation = glm::rotate(glm::mat4(1.f), turnFactor, 
+                  horAxis);
+               //up = glm::rotateX( up,turnFactor );
+         //}
+
          break;
 
       case 4:
-         rotation = glm::rotate(glm::mat4(1.f), (-1.0f) * turnFactor, glm::vec3(1.0,0.0,0.0));
+         //if(dir.y < r-r*0.05){
+            rotation = glm::rotate(glm::mat4(1.f), (-1.0f) * turnFactor, horAxis);
+            //up = glm::rotateX( up,(-1.0f)*turnFactor);
+         //}
          break;
 
    }
 
 //set result
    result = rotation * glm::vec4(dir,1.0);
+   resultAxis = rotation * glm::vec4(horAxis,1.0);
+
    dir = glm::vec3(result.x,result.y,result.z);
+   horAxis = glm::vec3(resultAxis.x,resultAxis.y,resultAxis.z);
 
 //change view
    view = glm::lookAt( center + dir, //Eye Position
                        center + dir + dir, //Focus point
-                       glm::vec3(0.0, 1.0, 0.0)); //Positive Y is up
+                       up); //Positive Y is up
 
 }

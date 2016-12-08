@@ -22,7 +22,7 @@ class Camera
 
     float turnDirX,turnDirY;
 
-    glm::vec3 dir;
+    glm::vec3 dir,up,horAxis;
     glm::vec3 center;
 };
 
