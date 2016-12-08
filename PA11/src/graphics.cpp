@@ -345,8 +345,8 @@ bool Graphics::setShaderProgram(int index){
   return true;
 }
 
-void Graphics::moveCamera(int id){
-  m_camera->setView(id);
+void Graphics::moveCamera(float x,float y){
+  m_camera->setView(x,y);
 }
 
 void Graphics::addAmbientDim(float val){

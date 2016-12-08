@@ -84,6 +84,13 @@ void Engine::Keyboard()
     m_running = false;
   }
 
+  //mouse event
+  else if (m_event.type == SDL_MOUSEMOTION){
+   
+   m_graphics->moveCamera( m_event.motion.xrel, m_event.motion.yrel );
+
+  }
+
   //Key events
   else if (m_event.type == SDL_KEYDOWN)
   {
@@ -168,37 +175,6 @@ void Engine::Keyboard()
     else if (m_event.key.keysym.sym == SDLK_SLASH)
     {
       m_graphics->adjustSpotlightIntensity(0.05f);
-    }
-
-    // camera viewpoints
-    else if (m_event.key.keysym.sym == SDLK_1)
-    {
-      m_graphics->moveCamera(1);
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_2)
-    {
-      m_graphics->moveCamera(2);
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_3)
-    {
-      m_graphics->moveCamera(3);
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_4)
-    {
-      m_graphics->moveCamera(4);
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_5)
-    {
-      m_graphics->moveCamera(5);
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_6)
-    {
-      m_graphics->moveCamera(6);
     }
 
     // controls

@@ -19,7 +19,7 @@ class Graphics
     void Render();
     bool loadShaderProgram(const char *fileVS, const char *fileFS);
     bool setShaderProgram(int index);
-    void moveCamera(int id);
+    void moveCamera(float x,float y);
     void addAmbientDim(float val);
     void addSpecularDim(float val);
     void adjustSpotlightRadius(float val);
