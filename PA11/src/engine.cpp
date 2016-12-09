@@ -118,11 +118,6 @@ void Engine::Keyboard()
       movement[1] = 0.0;
     }
 
-    else if (m_event.key.keysym.sym == SDLK_SPACE)
-    {
-      movement[2] = 1.0;
-    }
-
     // shaders
     else if (m_event.key.keysym.sym == SDLK_v)
     {
@@ -202,6 +197,12 @@ void Engine::Keyboard()
       m_graphics->movePlayer(3);
     }
 
+     //space
+    else if (m_event.key.keysym.sym == SDLK_SPACE)
+    {
+      m_graphics->movePlayer(4);
+    }    
+
 
     // reset game
     else if (m_event.key.keysym.sym == SDLK_r)
@@ -220,11 +221,6 @@ void Engine::Keyboard()
     else if (m_event.key.keysym.sym == SDLK_RIGHT)
     {
       movement[1] = 0.0;
-    }
-
-    else if (m_event.key.keysym.sym == SDLK_SPACE)
-    {
-      movement[2] = -1.0;
     }
 
 

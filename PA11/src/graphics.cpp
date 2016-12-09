@@ -90,14 +90,6 @@ bool Graphics::Initialize(int width, int height)
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  // Init Camera
-  m_camera = new Camera();
-  if(!m_camera->Initialize(width, height))
-  {
-    printf("Camera Failed to Initialize\n");
-    return false;
-  }
-
   // Create collider environment
   broadphase = new btDbvtBroadphase();
   collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -110,15 +102,24 @@ bool Graphics::Initialize(int width, int height)
 
 
    board = new Object(0.0,-1.0,0.0, //position
-                      0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
-                     0.0, 0,"../objects/board.obj");   //mass,meshtype,objfile
+                      0.0,(2.0 * 3.141592) * 1.5 / 2.0,0.0 , //rotation
+                     0.0, 0,"../objects/OpenPlatform.obj");   //mass,meshtype,objfile
 
    player = new Object(0.0,12.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
-                     1.0, 1,"../objects/player.obj");   //mass,meshtype,objfile
+                     1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
+
+  // Init Camera
+  m_camera = new Camera();
+  if(!m_camera->Initialize(width, height))
+  {
+    printf("Camera Failed to Initialize\n");
+    return false;
+  }
+
 
    SLOPE = 0.1;
-  dynamicsWorld->setGravity(btVector3(0.0,-9.81,0));//-1.0 * SLOPE));
+  dynamicsWorld->setGravity(btVector3(0.0,-2.0,0));//-1.0 * SLOPE));
 
   //Set kinematic/static rigidbodies and add rigidbodies to dynamicWorld
 
@@ -165,17 +166,15 @@ void Graphics::Update(unsigned int dt, float movement[])
 
   dynamicsWorld->stepSimulation(dt,5);
 
-  btTransform trans;
-  btQuaternion rot;
-
-  float flipperSpeed = 5.0;
-  btScalar yaw, pitch, roll;
-
   // board update
   board->Update( dt, movement, false);
 
   // player update
   player->Update( dt, movement, false);
+  m_camera->center.x = player->rigidBody->getCenterOfMassPosition().getX();
+  m_camera->center.y = player->rigidBody->getCenterOfMassPosition().getY() + 3.0;
+  m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
+  m_camera->updateView();
 
 
 }
@@ -386,33 +385,37 @@ void Graphics::movePlayer(int direction){
       printf("Moving UP...\r\n");
 
       player->rigidBody->getMotionState()->getWorldTransform(trans);
-      position.setY( position.getY()+9.1 );
-
-      trans.setOrigin(position);
-      player->rigidBody->setWorldTransform(trans);
-      player->rigidBody->getMotionState()->setWorldTransform(trans);
+      //position.setY( position.getY()+9.1 );
+      player->rigidBody->applyCentralForce( btVector3(-0.5,0,0));
+      //trans.setOrigin(position);
+      //player->rigidBody->setWorldTransform(trans);
+      //player->rigidBody->getMotionState()->setWorldTransform(trans);
       break;
 
     // down
     case 1:
 
       printf("Moving DOWN...\r\n");
+      player->rigidBody->applyCentralForce( btVector3(0.5,0,0));
       break;
 
     // left
     case 2:
 
       printf("Moving LEFT...\r\n");
+      player->rigidBody->applyCentralForce( btVector3( 0,0,0.5 ) );
       break;
 
     // right
     case 3:
 
       printf("Moving RIGHT...\r\n");
+      player->rigidBody->applyCentralForce( btVector3( 0,0,-0.5 ) );
       break;
 
-    default:
-
+    case 4:
+      printf("Jumping...\r\n");
+      player->rigidBody->applyCentralForce( btVector3(0,100.0,0.0) );
       break;
 
   }
