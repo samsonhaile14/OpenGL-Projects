@@ -176,6 +176,27 @@ void Graphics::Update(unsigned int dt, float movement[])
   m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
   m_camera->updateView();
 
+  int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+  for( int i = 0; i < numManifolds; ++i ){
+    btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+
+
+    const btCollisionObject *obA = contactManifold->getBody0();
+    const btTransform transA = obA->getWorldTransform();
+    const btVector3 originA = transA.getOrigin();
+
+    const btCollisionObject *obB = contactManifold->getBody1();
+    const btTransform transB = obB->getWorldTransform();
+    const btVector3 originB = transB.getOrigin();
+
+    // check if any collision for bumper one detected
+    if( originA == player->rigidBody->getCenterOfMassPosition() ||
+        originB == player->rigidBody->getCenterOfMassPosition() )
+    {
+      playerOnGround = true;
+    } 
+
+  }
 
 }
 
@@ -414,8 +435,11 @@ void Graphics::movePlayer(int direction){
       break;
 
     case 4:
-      printf("Jumping...\r\n");
-      player->rigidBody->applyCentralForce( btVector3(0,100.0,0.0) );
+      if(playerOnGround){
+         printf("Jumping...\r\n");
+         player->rigidBody->applyCentralForce( btVector3(0,100.0,0.0) );
+         playerOnGround = false;
+      }
       break;
 
   }
