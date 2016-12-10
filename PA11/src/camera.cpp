@@ -4,7 +4,7 @@
 Camera::Camera()
 {
 r = 5.f;
-dir = glm::vec3(0.0,r ,0.0);
+dir = glm::vec3(0.0,r*sqrt(2.f)/2.f,r*sqrt(2.f)/2.f);
 up = glm::vec3(0.0,r,0.0);
 horAxis = glm::vec3(1.0,0.0,0.0);
 

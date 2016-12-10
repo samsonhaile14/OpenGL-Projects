@@ -102,7 +102,7 @@ bool Graphics::Initialize(int width, int height)
 
 
    board = new Object(0.0,-1.0,0.0, //position
-                      0.0,(2.0 * 3.141592) * 1.5 / 2.0,0.0 , //rotation
+                      0.0,(2.0 * 3.141592) / 2.0,0.0 , //rotation
                      0.0, 0,"../objects/OpenPlatform.obj");   //mass,meshtype,objfile
 
    player = new Object(0.0,12.0,0.0, //position
@@ -395,8 +395,8 @@ void Graphics::resetGame(){
 
 void Graphics::movePlayer(int direction){
 
-  btTransform trans;
-  btVector3 position = trans.getOrigin();
+  glm::vec3 force;
+  float multiplier = 1.0;
 
   switch(direction){
 
@@ -404,34 +404,44 @@ void Graphics::movePlayer(int direction){
     case 0:
 
       printf("Moving UP...\r\n");
-
-      player->rigidBody->getMotionState()->getWorldTransform(trans);
-      //position.setY( position.getY()+9.1 );
-      player->rigidBody->applyCentralForce( btVector3(-0.5,0,0));
-      //trans.setOrigin(position);
-      //player->rigidBody->setWorldTransform(trans);
-      //player->rigidBody->getMotionState()->setWorldTransform(trans);
+      force = (m_camera->dir);
+      force.x *= multiplier/m_camera->r;
+      force.y = 0;
+      force.z *= multiplier/m_camera->r;
+      player->rigidBody->applyCentralForce( btVector3(force.x,force.y,force.z) );
       break;
 
     // down
     case 1:
 
       printf("Moving DOWN...\r\n");
-      player->rigidBody->applyCentralForce( btVector3(0.5,0,0));
+      force = (m_camera->dir);
+      force.x *= -multiplier/m_camera->r;
+      force.y = 0;
+      force.z *= -multiplier/m_camera->r;
+      player->rigidBody->applyCentralForce( btVector3(force.x,force.y,force.z) );
       break;
 
     // left
     case 2:
 
       printf("Moving LEFT...\r\n");
-      player->rigidBody->applyCentralForce( btVector3( 0,0,0.5 ) );
+      force = (m_camera->horAxis);
+      force.x *= multiplier/m_camera->r;
+      force.y = 0;
+      force.z *= multiplier/m_camera->r;
+      player->rigidBody->applyCentralForce( btVector3(force.x,force.y,force.z) );
       break;
 
     // right
     case 3:
 
       printf("Moving RIGHT...\r\n");
-      player->rigidBody->applyCentralForce( btVector3( 0,0,-0.5 ) );
+      force = (m_camera->horAxis);
+      force.x *= -multiplier/m_camera->r;
+      force.y = 0;
+      force.z *= -multiplier/m_camera->r;
+      player->rigidBody->applyCentralForce( btVector3(force.x,force.y,force.z) );
       break;
 
     case 4:

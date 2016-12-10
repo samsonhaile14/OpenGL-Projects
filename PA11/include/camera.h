@@ -13,18 +13,20 @@ class Camera
     glm::mat4 GetView();
     void updateView();
     void setView(float x,float y);
+
     glm::vec3 center;  
+    float r;
+    glm::vec3 dir,up,horAxis;
+
 
   private:
     glm::mat4 projection;
     glm::mat4 view;
-    float r;
 
     float turnFactor;
 
     float turnDirX,turnDirY;
 
-    glm::vec3 dir,up,horAxis;
 };
 
 #endif /* CAMERA_H */
