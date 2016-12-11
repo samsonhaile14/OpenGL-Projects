@@ -203,6 +203,11 @@ void Engine::Keyboard()
       m_graphics->movePlayer(4);
     }    
 
+     //stop
+    else if (m_event.key.keysym.sym == SDLK_m)
+    {
+      m_graphics->movePlayer(5);
+    }
 
     // reset game
     else if (m_event.key.keysym.sym == SDLK_r)

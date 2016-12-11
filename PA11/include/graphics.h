@@ -80,7 +80,7 @@ class Graphics
 
     float SLOPE;
 
-    bool playerOnGround;
+    bool playerOnGround = true;
 
     int score;
     int lives;

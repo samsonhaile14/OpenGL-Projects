@@ -6,7 +6,7 @@ Camera::Camera()
 r = 5.f;
 dir = glm::vec3(0.0,r*sqrt(2.f)/2.f,r*sqrt(2.f)/2.f);
 up = glm::vec3(0.0,r,0.0);
-horAxis = glm::vec3(1.0,0.0,0.0);
+horAxis = glm::vec3(r,0.0,0.0);
 
 center = glm::vec3(0.0,3.0,0.0);
 
@@ -60,8 +60,8 @@ glm::mat4 rotation;
 glm::vec4 result,resultAxis;
 
 //set rotation
-   rotation = glm::rotate(glm::mat4(1.f), (-1.f) * turnFactor * x, glm::vec3(0.0,1.0,0.0));
-   rotation = glm::rotate(rotation, turnFactor * y, horAxis);
+   rotation = glm::rotate(glm::mat4(1.f), (-1.f) * turnFactor * x * 2.f, glm::vec3(0.0,1.0,0.0));
+   rotation = glm::rotate(rotation, turnFactor * y * 2.f, horAxis);
 
 //set result
    result = rotation * glm::vec4(dir,1.0);
