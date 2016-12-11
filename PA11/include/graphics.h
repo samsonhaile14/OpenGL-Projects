@@ -59,6 +59,7 @@ class Graphics
 
     Object *board;
     Object *player;
+    Object **enemies;
 
     glm::vec4 lightPos;
     glm::vec4 lightPosB;
@@ -75,13 +76,13 @@ class Graphics
     btSequentialImpulseConstraintSolver *solver;
     btDiscreteDynamicsWorld *dynamicsWorld;
     
-
     bool clockwise = true;
 
     float SLOPE;
 
     bool playerOnGround;
 
+    int numEnemies = 1;
     int score;
     int lives;
     bool isGameOver;

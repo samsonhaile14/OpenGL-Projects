@@ -62,6 +62,17 @@ Graphics::~Graphics()
      delete player;
      player = NULL;
     }
+
+    if( enemies != NULL ){
+      for( int i = 0; i < numEnemies; ++i ){
+        if( enemies[i] != NULL ){
+          delete enemies[i];
+          enemies[i] = NULL;
+        }
+      }
+      delete[] enemies;
+      enemies = NULL;
+    }
 }
 
 bool Graphics::Initialize(int width, int height)
@@ -109,6 +120,13 @@ bool Graphics::Initialize(int width, int height)
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
 
+   enemies = new Object*[numEnemies];
+   for( int i = 0; i < numEnemies; ++i ){
+     enemies[i] = new Object(4.0, 12.0, 5.0,
+                              0.0, 0.0, 0.0,
+                              0.0, 0, "../objects/sphere.obj");
+   }
+
   // Init Camera
   m_camera = new Camera();
   if(!m_camera->Initialize(width, height))
@@ -127,12 +145,19 @@ bool Graphics::Initialize(int width, int height)
 
   dynamicsWorld->addRigidBody(board->rigidBody,COL_WALL,COL_BALL);
   dynamicsWorld->addRigidBody(player->rigidBody,COL_BALL,COL_WALL);
+  for( int i = 0; i < numEnemies; ++i ){
+    dynamicsWorld->addRigidBody(enemies[i]->rigidBody,COL_BALL,COL_WALL);
+  }
 
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
   board->rigidBody->setActivationState(DISABLE_DEACTIVATION);
 
   player->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+  for( int i = 0; i < numEnemies; ++i ){
+    (enemies[i])->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  }
 
   // Set up the shaders
   if( !loadShaderProgram("vl_vertex.glsl", "vl_fragment.glsl") ){
@@ -198,6 +223,11 @@ void Graphics::Update(unsigned int dt, float movement[])
 
   }
 
+  // enemy update
+  for( int i = 0; i < numEnemies; ++i ){
+    enemies[i]->Update(dt, movement, false);
+  }
+
 }
 
 void Graphics::Render()
@@ -229,6 +259,10 @@ void Graphics::Render()
   glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(player->GetModel()));
   player->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
 
+  for( int i = 0; i < numEnemies; ++i ){
+    glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(enemies[i]->GetModel()));
+    enemies[i]->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+  }
 
   // Get any errors from OpenGL
   auto error = glGetError();
