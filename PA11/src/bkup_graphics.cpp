@@ -285,14 +285,20 @@ void Graphics::Update(unsigned int dt, float movement[])
      m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
      m_camera->updateView();
 
-
+<<<<<<< HEAD
+//  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
+  lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
+=======
   //spotlight over player
      glm::mat4 pMat = player->GetModel();
      glm::vec4 illumPlayer = glm::vec4(pMat[3]);
      lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
+>>>>>>> dbfaaf763b6371c83677b9bf657b6fdc1ea0002d
+   
 
+<<<<<<< HEAD
   // enemy update
-  glm::vec3 playerLoc = glm::vec3(
+  glm::vec3 playerPos = glm::vec3(
                            player->rigidBody->getCenterOfMassPosition().getX(),
                            player->rigidBody->getCenterOfMassPosition().getY(),
                            player->rigidBody->getCenterOfMassPosition().getZ()
@@ -300,7 +306,7 @@ void Graphics::Update(unsigned int dt, float movement[])
   for( int i = 0; i < numEnemies; ++i ){
     
     // enemy direction
-    facePlayer(i, playerLoc);
+    facePlayer(i, playerPos);
 
     enemies[i]->Update( dt, movement, false);
   }
@@ -312,7 +318,7 @@ void Graphics::Update(unsigned int dt, float movement[])
       enemyBullets[i][j]->Update( dt, movement, false);
    
       // check if bullet collided
-      int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+      numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
       for( int k = 0; k < numManifolds; ++k ){
           btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(k);
 
@@ -339,7 +345,7 @@ void Graphics::Update(unsigned int dt, float movement[])
         }
       }
    }
-
+=======
    //record time since last jump
       playerOnGround += float(dt)/1000.f;
 
@@ -384,6 +390,8 @@ void Graphics::Update(unsigned int dt, float movement[])
             
          }
       }
+      
+>>>>>>> dbfaaf763b6371c83677b9bf657b6fdc1ea0002d
 }
 
 void Graphics::Render()
