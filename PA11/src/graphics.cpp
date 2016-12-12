@@ -120,11 +120,34 @@ bool Graphics::Initialize(int width, int height)
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
 
+    glm::vec2 playerPosHoriz = glm::vec2(
+                           player->rigidBody->getCenterOfMassPosition().getX(),
+                           player->rigidBody->getCenterOfMassPosition().getZ()
+                          );
+    printf("%f, %f\r\n", playerPosHoriz.x, playerPosHoriz.y);
+
+    glm::vec3 enemyPos = glm::vec3(0.0, 8.0, -17.0);
+    glm::vec2 enemyPosHoriz = glm::vec2(enemyPos.x, enemyPos.z);
+
+    glm::vec2 distPE;
+    distPE.x = playerPosHoriz.x - enemyPosHoriz.x;
+    distPE.y = playerPosHoriz.y - enemyPosHoriz.y;
+    distPE = normalize(distPE);
+ 
    enemies = new Object*[numEnemies];
+   float angle = distPE.y;
+   printf("%f\r\n", angle);
+   angle = acos(angle);
+
+   if( playerPosHoriz.x - enemyPosHoriz.x <= 0 )
+     angle *= -1;
+
+   printf("%f\r\n", angle);
+
    for( int i = 0; i < numEnemies; ++i ){
-     enemies[i] = new Object(4.0, 12.0, 5.0,
-                              0.0, 0.0, 0.0,
-                              0.0, 0, "../objects/sphere.obj");
+     enemies[i] = new Object(enemyPos.x, enemyPos.y, enemyPos.z,
+                              0.0, angle, 0.0,
+                              0.0, 4, "../objects/player.obj");
    }
 
   // Init Camera
@@ -224,8 +247,14 @@ void Graphics::Update(unsigned int dt, float movement[])
   }
 
   // enemy update
+    glm::vec3 playerPos = glm::vec3(
+                           player->rigidBody->getCenterOfMassPosition().getX(),
+                           player->rigidBody->getCenterOfMassPosition().getY(),
+                           player->rigidBody->getCenterOfMassPosition().getZ()
+                          );
   for( int i = 0; i < numEnemies; ++i ){
-    enemies[i]->Update(dt, movement, false);
+    facePlayer(enemies[i], playerPos);
+    enemies[i]->Update( dt, movement, false);
   }
 
 }
@@ -488,4 +517,45 @@ void Graphics::movePlayer(int direction){
 
   }
   return;
+}
+
+void Graphics::facePlayer(Object* enemy, glm::vec3 playerPos){
+
+  // get angle from default (0,1) to direction of player (on XY-plane)
+    // get positions
+  glm::vec2 playerPosHoriz = glm::vec2( playerPos.x, playerPos.z );
+
+  glm::vec2 enemyPosHoriz = glm::vec2(
+                          enemy->rigidBody->getCenterOfMassPosition().getX(),
+                          enemy->rigidBody->getCenterOfMassPosition().getZ()
+                         );
+
+    // get normalized vector from positions
+  glm::vec2 distPE;
+  distPE.x = playerPosHoriz.x - enemyPosHoriz.x;
+  distPE.y = playerPosHoriz.y - enemyPosHoriz.y;
+  distPE = normalize(distPE);
+ 
+    // get angle of rotation (dot product with vector (0,1))
+  float angle = distPE.y;
+  angle = acos(angle);
+  if( playerPosHoriz.x - enemyPosHoriz.x <= 0 )
+    angle *= -1;
+
+
+  // set angle
+    // get current state 
+  btMotionState *newState = enemy->rigidBody->getMotionState();
+  btTransform newTrans;
+  newState->getWorldTransform(newTrans);
+
+    // set rotation
+  btQuaternion rot;
+  rot.setEulerZYX( 0.0, angle, 0.0 ); 
+  newTrans.setRotation(rot);
+
+    // set new state
+  newState->setWorldTransform(newTrans);
+  enemy->rigidBody->setMotionState(newState);
+
 }

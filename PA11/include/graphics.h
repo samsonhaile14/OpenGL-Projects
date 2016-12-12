@@ -27,6 +27,7 @@ class Graphics
     void resetGame();
 
     void movePlayer(int direction);
+    void facePlayer(Object* enemy, glm::vec3 playerPos);
 
   private:
     std::string ErrorString(GLenum error);
