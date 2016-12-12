@@ -26,7 +26,7 @@ class Graphics
     void adjustSpotlightIntensity(float val);
     void resetGame();
 
-    void movePlayer(int direction);
+    void movePlayer(int direction, int dt);
     void facePlayer(int enemyID, glm::vec3 playerPos);
     void setBulletMotion(int enemyID, int bulletID);
     void resetBullet(Object *bullet, int bulletID);
@@ -69,6 +69,9 @@ class Graphics
     int *bulletTimeToLive;
 
     glm::vec3 lvEnd[3];
+    glm::vec3 lvEnemyPos[3];
+    glm::vec3 lvEnemyDir[3];
+    bool lvEnemyTrack[3];
 
     glm::vec4 lightPos;
     glm::vec4 lightPosB;
@@ -94,11 +97,12 @@ class Graphics
 
     int numEnemies = 1;
     int numBulletsPerEnemy = 1;
+    bool doesEnemyTrack = false;
     int score;
     int lives;
     int deathCount;
     bool isGameOver;
-    int levelNumber = 3;
+    int levelNumber = 1;
 };
 
 #endif /* GRAPHICS_H */

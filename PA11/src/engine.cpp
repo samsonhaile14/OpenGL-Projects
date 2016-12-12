@@ -174,50 +174,51 @@ void Engine::Keyboard()
 
     // controls
       // up
-    else if (m_event.key.keysym.sym == SDLK_i)
+    else if (m_event.key.keysym.sym == SDLK_w)
     {
-      m_graphics->movePlayer(0);
+      m_graphics->movePlayer(0, m_DT);
     }
 
       // down
-    else if (m_event.key.keysym.sym == SDLK_k)
+    else if (m_event.key.keysym.sym == SDLK_s)
     {
-      m_graphics->movePlayer(1);
+      m_graphics->movePlayer(1, m_DT);
     }
 
       // left
-    else if (m_event.key.keysym.sym == SDLK_j)
+    else if (m_event.key.keysym.sym == SDLK_a)
     {
-      m_graphics->movePlayer(2);
+      m_graphics->movePlayer(2, m_DT);
     }
 
       // right
-    else if (m_event.key.keysym.sym == SDLK_l)
+    else if (m_event.key.keysym.sym == SDLK_d)
     {
-      m_graphics->movePlayer(3);
+      m_graphics->movePlayer(3, m_DT);
     }
 
      //space
     else if (m_event.key.keysym.sym == SDLK_SPACE)
     {
-      m_graphics->movePlayer(4);
+      m_graphics->movePlayer(4, m_DT);
     }    
 
      //stop
-    else if (m_event.key.keysym.sym == SDLK_m)
+    else if (m_event.key.keysym.sym == SDLK_c)
     {
-      m_graphics->movePlayer(5);
+      m_graphics->movePlayer(5, m_DT);
     }
 
     // reset game
     else if (m_event.key.keysym.sym == SDLK_r)
     {
-      printf("RESET");
+//      printf("RESET");
       m_graphics->resetGame();
     }
-  }
+  } 
 
   else if(m_event.type == SDL_KEYUP){
+
     if (m_event.key.keysym.sym == SDLK_LEFT)
     {
       movement[0] = 0.0;
@@ -228,7 +229,11 @@ void Engine::Keyboard()
       movement[1] = 0.0;
     }
 
-
+    // set damping to player movement
+    else
+    {
+      m_graphics->movePlayer(6, m_DT);
+    }
   }
 }
 

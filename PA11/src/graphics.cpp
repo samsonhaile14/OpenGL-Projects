@@ -26,6 +26,18 @@ lvEnd[0] = glm::vec3( -557.6586,25.0000,297.7418 );
 lvEnd[1] = glm::vec3( -593.3218,-78.1196,84.5833 );
 lvEnd[2] = glm::vec3(67.3005, 137.1841, 119.9242);
 
+lvEnemyPos[0] = glm::vec3( -50.0, -10.0, 30.0 );
+lvEnemyPos[1] = glm::vec3( 90.0, 7.0, -90.0 );
+lvEnemyPos[2] = glm::vec3( 0.0, 6.5, -15.0 );
+
+lvEnemyDir[0] = glm::vec3( -1.0, 0.0, 0.0 );
+lvEnemyDir[1] = glm::vec3( -1.0, 0.0, 0.0 );
+lvEnemyDir[2] = glm::vec3( 1.0, 0.0, 0.0 );
+
+lvEnemyTrack[0] = false;
+lvEnemyTrack[1] = false;
+lvEnemyTrack[2] = true;
+
 
 lightPosC = glm::vec4(lvEnd[levelNumber - 1],1.0);
 
@@ -161,7 +173,7 @@ bool Graphics::Initialize(int width, int height)
    board = new Object(0.0,-1.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 2.0,0.0 , //rotation
                      0.0, 0,path.c_str());   //mass,meshtype,objfile
-   player = new Object(0.0,12.0,0.0, //position
+   player = new Object(0.0,12.0,60.0, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
 
@@ -171,9 +183,11 @@ bool Graphics::Initialize(int width, int height)
                            player->rigidBody->getCenterOfMassPosition().getZ()
                           );
 
-   glm::vec3 enemyPos = glm::vec3(0.0, 8.0, -17.0);
+   doesEnemyTrack = lvEnemyTrack[levelNumber-1];
+   glm::vec3 enemyPos = lvEnemyPos[levelNumber-1];
    enemies = new Object*[numEnemies];
    enemyDirection = new glm::vec3[numEnemies];
+   enemyDirection[0] = lvEnemyDir[levelNumber-1];
    isBulletUsed = new bool[numEnemies];
    bulletTimeToLive = new int[numEnemies];
    for( int i = 0; i < numEnemies; ++i ){
@@ -181,7 +195,8 @@ bool Graphics::Initialize(int width, int height)
                               0.0, 0.0, 0.0,
                               0.0, 4, "../objects/player.obj");
      
-     facePlayer(i, playerPos);
+     if( doesEnemyTrack )
+       facePlayer(i, playerPos);
      isBulletUsed[i] = false;
      bulletTimeToLive[i] = -1;
    }
@@ -207,6 +222,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   dynamicsWorld->setGravity(btVector3(0.0,-2.0,0));
+  dynamicsWorld->setGravity(btVector3(0.0,-0.5,0));
 
   //Set kinematic/static rigidbodies and add rigidbodies to dynamicWorld
 
@@ -281,9 +297,10 @@ void Graphics::Update(unsigned int dt, float movement[])
   // if player drops off of map, set back to position
      if( player->rigidBody->getCenterOfMassPosition().y() < -100.f ){
        btTransform pos = player->rigidBody->getCenterOfMassTransform();
-       pos.setOrigin( btVector3(0.0,12.0,0.0) );
+       pos.setOrigin( btVector3(0.0,12.0,60.0) );
        player->rigidBody->setCenterOfMassTransform(pos);
        player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+       player->rigidBody->setAngularVelocity(btVector3(0.0,0.0,0.0));
 
        printf("You died %d times.\r\n", ++deathCount);
       }
@@ -310,9 +327,26 @@ void Graphics::Update(unsigned int dt, float movement[])
   for( int i = 0; i < numEnemies; ++i ){
     
     // enemy direction
-    facePlayer(i, playerLoc);
+    if( doesEnemyTrack )
+      facePlayer(i, playerLoc);
 
     enemies[i]->Update( dt, movement, false);
+
+    // reset player if collides with enemy
+    btVector3 distPE = enemies[i]->rigidBody->getCenterOfMassPosition() - player->rigidBody->getCenterOfMassPosition();
+    distPE = distPE.absolute();
+
+              if( distPE.getY() < 3.5 && distPE.getX() < 3.5 && distPE.getZ() < 3.5 )
+              {
+                btTransform pos = player->rigidBody->getCenterOfMassTransform();
+                pos.setOrigin( btVector3(0.0,12.0,60.0) );
+                player->rigidBody->setCenterOfMassTransform(pos);
+                player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+                player->rigidBody->setAngularVelocity(btVector3(0.0,0.0,0.0));
+
+                printf("You died %d times.\r\n", ++deathCount );
+ 
+              }
   }
 
   // enemy bullet update
@@ -356,15 +390,16 @@ void Graphics::Update(unsigned int dt, float movement[])
 
               distPB = distPB.absolute();
 
-              if( distPB.getY() < 3.0 && distPB.getX() < 3.0 && distPB.getZ() < 3.0 )
+              if( distPB.getY() < 3.5 && distPB.getX() < 3.5 && distPB.getZ() < 3.5 )
               {
                 resetBullet(enemyBullets[i][j], i*numEnemies+j);
                 btTransform pos = player->rigidBody->getCenterOfMassTransform();
-                pos.setOrigin( btVector3(0.0,12.0,0.0) );
+                pos.setOrigin( btVector3(0.0,12.0,60.0) );
                 player->rigidBody->setCenterOfMassTransform(pos);
                 player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+                player->rigidBody->setAngularVelocity(btVector3(0.0,0.0,0.0));
 
-                printf("You died %d times.\r\n", ++deathCount);
+                printf("You died %d times.\r\n", ++deathCount );
  
               }
             }
@@ -404,11 +439,30 @@ void Graphics::Update(unsigned int dt, float movement[])
                board->rigidBody->setActivationState(DISABLE_DEACTIVATION);
             //replacing ball at start
                 btTransform pos = player->rigidBody->getCenterOfMassTransform();
-                pos.setOrigin( btVector3(0.0,12.0,0.0) );
+                pos.setOrigin( btVector3(0.0,12.0,60.0) );
                 player->rigidBody->setCenterOfMassTransform(pos);
                 player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+                player->rigidBody->setAngularVelocity(btVector3(0.0,0.0,0.0));
+
             //changing goal point
                lightPosC = glm::vec4(lvEnd[levelNumber-1],1.0);
+
+            //changing enemy position
+/* ISSUE: CREATES SEG_FAULT WHEN EXECUTED */
+/*
+            for( int i = 0; i < numEnemies; ++i )
+              if( enemies[i] != NULL ){
+                delete enemies[i];
+                enemies[i] = NULL;
+            }
+*/
+
+            glm::vec3 enemyPos = lvEnemyPos[levelNumber-1];
+            enemyDirection[0] = lvEnemyDir[levelNumber-1];
+            doesEnemyTrack = lvEnemyTrack[levelNumber-1];
+            enemies[0] = new Object(enemyPos.x, enemyPos.y, enemyPos.z,
+                                    0.0, 0.0, 0.0,
+                                    0.0, 4, "../objects/player.obj");
                
          }
 
@@ -623,7 +677,7 @@ void Graphics::resetGame(){
 
 }
 
-void Graphics::movePlayer(int direction){
+void Graphics::movePlayer(int direction, int dt){
 
   glm::vec3 force;
   float multiplier = 1.0;
@@ -681,8 +735,32 @@ void Graphics::movePlayer(int direction){
     //halt ball
     case 5:
          player->rigidBody->setLinearVelocity( btVector3(0,0,0) );       
+//         player->rigidBody->setAngularVelocity( btVector3(0,0,0) );       
+
          break;
 
+    // damp movement
+    case 6:
+/*
+         float changeFactor = 0.01;
+         btVector3 change = btVector3(changeFactor, changeFactor, changeFactor);
+         btVector3 linV = player->rigidBody->getLinearVelocity() - change;
+         btVector3 angV = player->rigidBody->getAngularVelocity() - change;
+         
+         
+         player->rigidBody->setLinearVelocity(linV);
+         player->rigidBody->setAngularVelocity(angV);
+*/
+/*
+         if( jumps <= 0 ){
+         player->rigidBody->setDamping(0.11, 0.11);
+         player->rigidBody->applyDamping( dt );
+         }
+//         player->rigidBody->setLinearVelocity( btVector3(0,0,0) ); 
+//         player->rigidBody->setAngularVelocity( btVector3(0,0,0) );
+*/
+    
+         break;
   }
   return;
 }

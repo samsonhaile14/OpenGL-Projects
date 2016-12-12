@@ -7,35 +7,6 @@
 int main(int argc, char **argv)
 {
    std::vector< std::string > fileNames;
-   float dimness, ambDimness;
-
-  //take object files
-  if( argc > 1 ){
-  
-    dimness = atof(argv[1]);
-
-    if( dimness == 0 ){
-      printf( "Error, dimness has invalid value\n" );
-      return 1;
-    }
-
-   if( argc > 2 ){
-      ambDimness = atof(argv[2]);
-   }
-
-   else{
-      ambDimness = 1.0;
-   }
-
-  }
-
-  else{
-
-   dimness = 1.0;
-   ambDimness = 1.0;
-
-  }
-
 
 
   // Start an engine and run it then cleanup after
