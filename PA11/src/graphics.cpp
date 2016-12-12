@@ -19,6 +19,7 @@ g_cutoffAngle = 0.65;
 g_spotlightIntensity = 2.0;
 score = 0;
 lives = 4;
+deathCount = 0;
 isGameOver = false;
 
 lvEnd[0] = glm::vec3( -557.6586,25.0000,297.7418 );
@@ -111,6 +112,11 @@ Graphics::~Graphics()
       delete[] isBulletUsed;
       isBulletUsed = NULL;
     }
+
+    if( bulletTimeToLive != NULL ){
+      delete[] bulletTimeToLive;
+      bulletTimeToLive = NULL;
+    }
 }
 
 bool Graphics::Initialize(int width, int height)
@@ -169,6 +175,7 @@ bool Graphics::Initialize(int width, int height)
    enemies = new Object*[numEnemies];
    enemyDirection = new glm::vec3[numEnemies];
    isBulletUsed = new bool[numEnemies];
+   bulletTimeToLive = new int[numEnemies];
    for( int i = 0; i < numEnemies; ++i ){
      enemies[i] = new Object(enemyPos.x, enemyPos.y, enemyPos.z,
                               0.0, 0.0, 0.0,
@@ -176,6 +183,7 @@ bool Graphics::Initialize(int width, int height)
      
      facePlayer(i, playerPos);
      isBulletUsed[i] = false;
+     bulletTimeToLive[i] = -1;
    }
 
    enemyBullets = new Object**[numEnemies];
@@ -276,6 +284,8 @@ void Graphics::Update(unsigned int dt, float movement[])
        pos.setOrigin( btVector3(0.0,12.0,0.0) );
        player->rigidBody->setCenterOfMassTransform(pos);
        player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+
+       printf("You died %d times.\r\n", ++deathCount);
       }
 
   // player and camera update
@@ -308,8 +318,15 @@ void Graphics::Update(unsigned int dt, float movement[])
   // enemy bullet update
   for( int i = 0; i < numEnemies; ++i ){
     for( int j = 0; j < numBulletsPerEnemy; ++j ){
-      setBulletMotion(i);
+      setBulletMotion(i, i*numEnemies+j);
       enemyBullets[i][j]->Update( dt, movement, false);
+
+      // check if bullet exceeds TTL
+      int bulletID = i*numEnemies + j;
+      bulletTimeToLive[bulletID] -= dt;
+      if( bulletTimeToLive[bulletID] < 0 )
+        resetBullet(enemyBullets[i][j], bulletID);
+      
    
       // check if bullet collided
       int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
@@ -328,12 +345,28 @@ void Graphics::Update(unsigned int dt, float movement[])
               const btCollisionObject *obB = contactManifold->getBody1();
               const btTransform transB = obB->getWorldTransform();
               const btVector3 originB = transB.getOrigin();
-        
+      
               if( originA == enemyBullets[i][j]->rigidBody->getCenterOfMassPosition() ||
                  originB == enemyBullets[i][j]->rigidBody->getCenterOfMassPosition() )
               {
                 resetBullet(enemyBullets[i][j], i*numEnemies+j);
               } 
+
+              btVector3 distPB = enemyBullets[i][j]->rigidBody->getCenterOfMassPosition() - player->rigidBody->getCenterOfMassPosition();
+
+              distPB = distPB.absolute();
+
+              if( distPB.getY() < 3.0 && distPB.getX() < 3.0 && distPB.getZ() < 3.0 )
+              {
+                resetBullet(enemyBullets[i][j], i*numEnemies+j);
+                btTransform pos = player->rigidBody->getCenterOfMassTransform();
+                pos.setOrigin( btVector3(0.0,12.0,0.0) );
+                player->rigidBody->setCenterOfMassTransform(pos);
+                player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+
+                printf("You died %d times.\r\n", ++deathCount);
+ 
+              }
             }
           }
         }
@@ -350,7 +383,7 @@ void Graphics::Update(unsigned int dt, float movement[])
                    (playerPos.z - lightPosC.z) * (playerPos.z - lightPosC.z) +
                    (playerPos.y - lightPosC.y) * (playerPos.y - lightPosC.y);
       dist = sqrt( dist );
-      printf("%f vs. %f, %f vs. %f, %f vs. %f\n",playerPos.x,lightPosC.x, playerPos.y,lightPosC.y, playerPos.z,lightPosC.z);
+//      printf("%f vs. %f, %f vs. %f, %f vs. %f\n",playerPos.x,lightPosC.x, playerPos.y,lightPosC.y, playerPos.z,lightPosC.z);
       if( dist < 10.0){
          if(levelNumber < 3){
             printf("congratulations, moving on to next level\n");
@@ -699,7 +732,7 @@ void Graphics::facePlayer(int enemyID, glm::vec3 playerPos){
 
 }
 
-void Graphics::setBulletMotion(int enemyID){
+void Graphics::setBulletMotion(int enemyID, int bulletID){
 
   // get needed objects
   Object *enemy = enemies[enemyID];
@@ -708,18 +741,15 @@ void Graphics::setBulletMotion(int enemyID){
 
   // set if there are unused bullets
   for( int i = 0; i < numBulletsPerEnemy; ++i ){
-    if( !isBulletUsed[i] ){
+    if( !isBulletUsed[bulletID] && bulletTimeToLive[bulletID] < 0 ){
       
-printf("%f, %f, %f\r\n", bulletDirection.x, bulletDirection.y, bulletDirection.z);
       // get bullet position
       glm::vec3 bulletPos = glm::vec3(
                     enemy->rigidBody->getCenterOfMassPosition().getX(),
                     enemy->rigidBody->getCenterOfMassPosition().getY(),
                     enemy->rigidBody->getCenterOfMassPosition().getZ()
                   );   
-printf("%f, %f, %f\r\n", bulletPos.x, bulletPos.y, bulletPos.z);
       bulletPos += normalize(bulletDirection);
-printf("%f, %f, %f\r\n", bulletPos.x, bulletPos.y, bulletPos.z);
 
       // set bullet position
 
@@ -742,9 +772,9 @@ printf("%f, %f, %f\r\n", bulletPos.x, bulletPos.y, bulletPos.z);
         float speedReduction = 10.0;
         bullets[i]->rigidBody->setGravity(btVector3(bulletDirection.x/speedReduction,0.0,bulletDirection.z/speedReduction));
 
-
       // set flag
-      isBulletUsed[i] = true;
+      isBulletUsed[bulletID] = true;
+      bulletTimeToLive[bulletID] = 5000; // 5 seconds
 
       // end function
       return;
@@ -767,7 +797,7 @@ void Graphics::resetBullet(Object *bullet, int bulletID){
     newState->getWorldTransform(newTrans);
 
     // set position
-    btVector3 newPos = btVector3(0.0, -15.0, 0.0);
+    btVector3 newPos = btVector3(-10.0, -15.0, 10.0);
     newTrans.setOrigin(newPos);
 
     // set new state
