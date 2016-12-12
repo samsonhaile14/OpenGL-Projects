@@ -27,7 +27,9 @@ class Graphics
     void resetGame();
 
     void movePlayer(int direction);
-    void facePlayer(Object* enemy, glm::vec3 playerPos);
+    void facePlayer(int enemyID, glm::vec3 playerPos);
+    void setBulletMotion(int enemyID);
+    void resetBullet(Object *bullet, int bulletID);
 
   private:
     std::string ErrorString(GLenum error);
@@ -61,6 +63,9 @@ class Graphics
     Object *board;
     Object *player;
     Object **enemies;
+    glm::vec3 *enemyDirection;
+    Object ***enemyBullets;
+    bool *isBulletUsed;
 
     glm::vec4 lightPos;
     glm::vec4 lightPosB;
@@ -84,6 +89,7 @@ class Graphics
     bool playerOnGround = true;
 
     int numEnemies = 1;
+    int numBulletsPerEnemy = 1;
     int score;
     int lives;
     bool isGameOver;

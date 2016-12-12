@@ -78,6 +78,37 @@ Graphics::~Graphics()
       delete[] enemies;
       enemies = NULL;
     }
+
+    if( enemyDirection != NULL ){
+      delete[] enemyDirection;
+      enemyDirection = NULL;
+    }
+
+    if( enemyBullets != NULL ){
+      for( int i = 0; i < numEnemies; ++i ){
+
+        if( enemyBullets[i] != NULL ){
+          for( int j = 0; j < numBulletsPerEnemy; ++j ){
+
+            if( enemyBullets[i][j] != NULL ){
+              delete enemyBullets[i][j];
+              enemyBullets[i][j] = NULL;
+            }
+          }
+
+          delete[] enemyBullets[i];
+          enemyBullets[i] = NULL;
+        }
+      }
+
+      delete[] enemyBullets;
+      enemyBullets = NULL;
+    }
+
+    if( isBulletUsed != NULL ){
+      delete[] isBulletUsed;
+      isBulletUsed = NULL;
+    }
 }
 
 bool Graphics::Initialize(int width, int height)
@@ -124,35 +155,36 @@ bool Graphics::Initialize(int width, int height)
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
 
-    glm::vec2 playerPosHoriz = glm::vec2(
+   glm::vec3 playerPos = glm::vec3(
                            player->rigidBody->getCenterOfMassPosition().getX(),
+                           player->rigidBody->getCenterOfMassPosition().getY(),
                            player->rigidBody->getCenterOfMassPosition().getZ()
                           );
-    printf("%f, %f\r\n", playerPosHoriz.x, playerPosHoriz.y);
 
-    glm::vec3 enemyPos = glm::vec3(0.0, 8.0, -17.0);
-    glm::vec2 enemyPosHoriz = glm::vec2(enemyPos.x, enemyPos.z);
-
-    glm::vec2 distPE;
-    distPE.x = playerPosHoriz.x - enemyPosHoriz.x;
-    distPE.y = playerPosHoriz.y - enemyPosHoriz.y;
-    distPE = normalize(distPE);
- 
+   glm::vec3 enemyPos = glm::vec3(0.0, 8.0, -17.0);
    enemies = new Object*[numEnemies];
-   float angle = distPE.y;
-   printf("%f\r\n", angle);
-   angle = acos(angle);
-
-   if( playerPosHoriz.x - enemyPosHoriz.x <= 0 )
-     angle *= -1;
-
-   printf("%f\r\n", angle);
-
+   enemyDirection = new glm::vec3[numEnemies];
+   isBulletUsed = new bool[numEnemies];
    for( int i = 0; i < numEnemies; ++i ){
      enemies[i] = new Object(enemyPos.x, enemyPos.y, enemyPos.z,
-                              0.0, angle, 0.0,
+                              0.0, 0.0, 0.0,
                               0.0, 4, "../objects/player.obj");
+     
+     facePlayer(i, playerPos);
+     isBulletUsed[i] = false;
    }
+
+   enemyBullets = new Object**[numEnemies];
+   for( int i = 0; i < numEnemies; ++i ){ 
+     enemyBullets[i] = new Object*[numBulletsPerEnemy];
+     for( int j = 0; j < numBulletsPerEnemy; ++j ){
+  
+       enemyBullets[i][j] = new Object(enemyPos.x+3*i, -15.0, enemyPos.z+3*j,
+                              0.0, 0.0, 0.0,
+                              1.0, 1, "../objects/sphere.obj");
+     }
+   }
+
 
   // Init Camera
   m_camera = new Camera();
@@ -171,14 +203,20 @@ bool Graphics::Initialize(int width, int height)
   int ballCollide = COL_WALL;
 
   dynamicsWorld->addRigidBody(board->rigidBody,COL_WALL,COL_BALL);
-<<<<<<< HEAD
   dynamicsWorld->addRigidBody(player->rigidBody,COL_BALL,ballCollide);
-=======
+
   dynamicsWorld->addRigidBody(player->rigidBody,COL_BALL,COL_WALL);
   for( int i = 0; i < numEnemies; ++i ){
     dynamicsWorld->addRigidBody(enemies[i]->rigidBody,COL_BALL,COL_WALL);
   }
->>>>>>> Enemies
+
+  for( int i = 0; i < numEnemies; ++i ){
+    for( int j = 0; j < numBulletsPerEnemy; ++j ){
+//      dynamicsWorld->addRigidBody(enemyBullets[i][j]->rigidBody,COL_BALL,ballCollide);
+      dynamicsWorld->addRigidBody(enemyBullets[i][j]->rigidBody, COL_BALL, COL_WALL);
+    }
+  }
+
 
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -188,6 +226,12 @@ bool Graphics::Initialize(int width, int height)
 
   for( int i = 0; i < numEnemies; ++i ){
     (enemies[i])->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+  }
+
+  for( int i = 0; i < numEnemies; ++i ){
+    for( int j = 0; j < numBulletsPerEnemy; ++j ){
+      enemyBullets[i][j]->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+    }
   }
 
   // Set up the shaders
@@ -219,7 +263,6 @@ bool Graphics::Initialize(int width, int height)
 
 void Graphics::Update(unsigned int dt, float movement[])
 {
-
   dynamicsWorld->stepSimulation(dt,5);
 
   // board update
@@ -244,7 +287,7 @@ void Graphics::Update(unsigned int dt, float movement[])
   glm::mat4 pMat = player->GetModel();
   glm::vec4 illumPlayer = glm::vec4(pMat[3]);
 
-  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
+//  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
   lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
    
   int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
@@ -270,16 +313,53 @@ void Graphics::Update(unsigned int dt, float movement[])
   }
 
   // enemy update
-    glm::vec3 playerPos = glm::vec3(
+  glm::vec3 playerPos = glm::vec3(
                            player->rigidBody->getCenterOfMassPosition().getX(),
                            player->rigidBody->getCenterOfMassPosition().getY(),
                            player->rigidBody->getCenterOfMassPosition().getZ()
                           );
   for( int i = 0; i < numEnemies; ++i ){
-    facePlayer(enemies[i], playerPos);
+    
+    // enemy direction
+    facePlayer(i, playerPos);
+
     enemies[i]->Update( dt, movement, false);
   }
 
+  // enemy bullet update
+  for( int i = 0; i < numEnemies; ++i ){
+    for( int j = 0; j < numBulletsPerEnemy; ++j ){
+      setBulletMotion(i);
+      enemyBullets[i][j]->Update( dt, movement, false);
+   
+      // check if bullet collided
+      numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+      for( int k = 0; k < numManifolds; ++k ){
+          btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(k);
+
+
+          int numContacts = contactManifold->getNumContacts();
+          for( int l = 0; l < numContacts; ++l){
+            btManifoldPoint &pt = contactManifold->getContactPoint(l);
+            if( pt.getDistance() < 0.f){
+              const btCollisionObject *obA = contactManifold->getBody0();
+              const btTransform transA = obA->getWorldTransform();
+              const btVector3 originA = transA.getOrigin();
+
+              const btCollisionObject *obB = contactManifold->getBody1();
+              const btTransform transB = obB->getWorldTransform();
+              const btVector3 originB = transB.getOrigin();
+        
+              if( originA == enemyBullets[i][j]->rigidBody->getCenterOfMassPosition() ||
+                 originB == enemyBullets[i][j]->rigidBody->getCenterOfMassPosition() )
+              {
+                resetBullet(enemyBullets[i][j], i*numEnemies+j);
+              } 
+            }
+          }
+        }
+      }
+   }
 }
 
 void Graphics::Render()
@@ -314,6 +394,13 @@ void Graphics::Render()
   for( int i = 0; i < numEnemies; ++i ){
     glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(enemies[i]->GetModel()));
     enemies[i]->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+  }
+
+  for( int i = 0; i < numEnemies; ++i ){
+    for( int j = 0; j < numBulletsPerEnemy; ++j ){
+      glUniformMatrix4fv(m_modelMatrix, 1, GL_FALSE, glm::value_ptr(enemyBullets[i][j]->GetModel()));
+      enemyBullets[i][j]->Render(gSampler,l_amb, l_dif, l_spec, l_shininess);
+    }
   }
 
   // Get any errors from OpenGL
@@ -541,7 +628,8 @@ void Graphics::movePlayer(int direction){
   return;
 }
 
-void Graphics::facePlayer(Object* enemy, glm::vec3 playerPos){
+void Graphics::facePlayer(int enemyID, glm::vec3 playerPos){
+  Object *enemy = enemies[enemyID];
 
   // get angle from default (0,1) to direction of player (on XY-plane)
     // get positions
@@ -557,7 +645,10 @@ void Graphics::facePlayer(Object* enemy, glm::vec3 playerPos){
   distPE.x = playerPosHoriz.x - enemyPosHoriz.x;
   distPE.y = playerPosHoriz.y - enemyPosHoriz.y;
   distPE = normalize(distPE);
- 
+
+  // set enemy direction
+  enemyDirection[enemyID] = glm::vec3(distPE.x, 0.0, distPE.y); // dummy
+
     // get angle of rotation (dot product with vector (0,1))
   float angle = distPE.y;
   angle = acos(angle);
@@ -580,4 +671,83 @@ void Graphics::facePlayer(Object* enemy, glm::vec3 playerPos){
   newState->setWorldTransform(newTrans);
   enemy->rigidBody->setMotionState(newState);
 
+}
+
+void Graphics::setBulletMotion(int enemyID){
+
+  // get needed objects
+  Object *enemy = enemies[enemyID];
+  glm::vec3 bulletDirection = enemyDirection[enemyID];
+  Object **bullets = enemyBullets[enemyID];
+
+  // set if there are unused bullets
+  for( int i = 0; i < numBulletsPerEnemy; ++i ){
+    if( !isBulletUsed[i] ){
+      
+printf("%f, %f, %f\r\n", bulletDirection.x, bulletDirection.y, bulletDirection.z);
+      // get bullet position
+      glm::vec3 bulletPos = glm::vec3(
+                    enemy->rigidBody->getCenterOfMassPosition().getX(),
+                    enemy->rigidBody->getCenterOfMassPosition().getY(),
+                    enemy->rigidBody->getCenterOfMassPosition().getZ()
+                  );   
+printf("%f, %f, %f\r\n", bulletPos.x, bulletPos.y, bulletPos.z);
+      bulletPos += normalize(bulletDirection);
+printf("%f, %f, %f\r\n", bulletPos.x, bulletPos.y, bulletPos.z);
+
+      // set bullet position
+
+        // get current state 
+        btMotionState *newState = bullets[i]->rigidBody->getMotionState();
+        btTransform newTrans;
+        newState->getWorldTransform(newTrans);
+
+        // set position
+        btVector3 newPos = btVector3(bulletPos.x, bulletPos.y, bulletPos.z);
+        newTrans.setOrigin(newPos);
+
+        // set new state
+        newState->setWorldTransform(newTrans);
+        bullets[i]->rigidBody->setMotionState(newState);
+
+      // set bullet motion
+        
+        // move bullet from enemy facing direction 
+        float speedReduction = 10.0;
+        bullets[i]->rigidBody->setGravity(btVector3(bulletDirection.x/speedReduction,0.0,bulletDirection.z/speedReduction));
+
+
+      // set flag
+      isBulletUsed[i] = true;
+
+      // end function
+      return;
+    }
+  }
+}
+
+void Graphics::resetBullet(Object *bullet, int bulletID){
+
+  // remove forces
+  bullet->rigidBody->setGravity(btVector3(0.0,0.0,0.0));
+  bullet->rigidBody->setAngularVelocity(btVector3(0.0,0.0,0.0));
+  bullet->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+
+  // translate to hidden position
+
+    // get current state 
+    btMotionState *newState = bullet->rigidBody->getMotionState();
+    btTransform newTrans;
+    newState->getWorldTransform(newTrans);
+
+    // set position
+    btVector3 newPos = btVector3(0.0, -15.0, 0.0);
+    newTrans.setOrigin(newPos);
+
+    // set new state
+    newState->setWorldTransform(newTrans);
+    bullet->rigidBody->setMotionState(newState);
+
+  // unset flag
+  isBulletUsed[bulletID] = false;  
 }
