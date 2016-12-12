@@ -22,7 +22,6 @@
           
           out vec2 TexCoord; 
           out vec4 color; 
-          out vec3 light;
           out vec3 lightB;
           out vec3 lightC;          
 
@@ -35,13 +34,8 @@
           
           vec3 L = normalize(LightPosition.xyz - pos); 
 
-          light = LightPosition.xyz;
           lightB = LightPositionB.xyz;
           lightC = LightPositionC.xyz;              
-
-          if( LightPosition.w != 0.0 ) {
-         	light = LightPosition.xyz - v_position.xyz;
-          }
 
           if( LightPositionB.w != 0.0 ) {
          	lightB = LightPositionB.xyz - v_position.xyz;

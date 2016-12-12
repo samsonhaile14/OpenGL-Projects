@@ -18,15 +18,10 @@
              vec4 texColor = texture2D( gSampler, TexCoord.st );
              frag_color = color * texColor;
 
-             // check if outside of spotlight (?)
-             if( dot(normalize(light), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle && 
-                 dot(normalize(lightB), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
-                 dot(normalize(lightC), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle )
-//               frag_color /= 10;
-               frag_color *= SpotlightIntensity*4;
-
-             else
-//               frag_color *= SpotlightIntensity;
-               frag_color *= SpotlightIntensity*4;
+             // check if inside spotlight (?)
+             if( !(dot(normalize(lightB), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
+                 dot(normalize(lightC), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle) ){
+               frag_color *= SpotlightIntensity;
+               }
           } 
 

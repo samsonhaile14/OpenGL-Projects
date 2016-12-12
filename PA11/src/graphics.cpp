@@ -16,10 +16,15 @@ g_dimness = dimness;
 g_ambDimness = ambDimness;
 g_specDimness = 1.0;
 g_cutoffAngle = 0.65;
-g_spotlightIntensity = 1.0;
+g_spotlightIntensity = 2.0;
 score = 0;
 lives = 4;
 isGameOver = false;
+
+glm::vec3 lvOneEnd = glm::vec3( -557.6586,25.0000,297.7418 );
+
+
+lightPosC = glm::vec4(lvOneEnd,1.0);
 
 }
 
@@ -151,7 +156,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   lightPos = glm::vec4( 0.0,5.0,0.0,1.0 );
+   lightPos = glm::vec4( 0.0,50.0,0.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -183,6 +188,13 @@ void Graphics::Update(unsigned int dt, float movement[])
   m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
   m_camera->updateView();
 
+  //spotlight over player
+  glm::mat4 pMat = player->GetModel();
+  glm::vec4 illumPlayer = glm::vec4(pMat[3]);
+
+  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
+  lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
+   
   int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
   for( int i = 0; i < numManifolds; ++i ){
     btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);

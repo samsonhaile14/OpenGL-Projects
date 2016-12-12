@@ -49,12 +49,10 @@
           frag_color = frag_color * texColor;
 
           // check if outside spotlight range
-          if( dot(L, normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
-              dot(normalize(fLB), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
-              dot(normalize(fLC), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle )
-            frag_color /= 10;
-          else
+          if( !(dot(normalize(fLB), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle &&
+              dot(normalize(fLC), normalize(vec3(0.0,1.0,0.0))) < CutoffAngle) ){
             frag_color *= SpotlightIntensity;
+            }
 
 	} 
 
