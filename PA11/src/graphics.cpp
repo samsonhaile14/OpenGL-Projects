@@ -21,10 +21,12 @@ score = 0;
 lives = 4;
 isGameOver = false;
 
-glm::vec3 lvOneEnd = glm::vec3( -557.6586,25.0000,297.7418 );
+lvEnd[0] = glm::vec3( -557.6586,25.0000,297.7418 );
+lvEnd[1] = glm::vec3( -593.3218,-78.1196,84.5833 );
+lvEnd[2] = glm::vec3(67.3005, 137.1841, 119.9242);
 
 
-lightPosC = glm::vec4(lvOneEnd,1.0);
+lightPosC = glm::vec4(lvEnd[levelNumber - 1],1.0);
 
 }
 
@@ -147,10 +149,12 @@ bool Graphics::Initialize(int width, int height)
 
   // Create the objects
 
-
+   std::string path = "../objects/level";
+   path += ('0'+levelNumber);
+   path +=".obj";
    board = new Object(0.0,-1.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 2.0,0.0 , //rotation
-                     0.0, 0,"../objects/level1.obj");   //mass,meshtype,objfile
+                     0.0, 0,path.c_str());   //mass,meshtype,objfile
    player = new Object(0.0,12.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
@@ -194,9 +198,7 @@ bool Graphics::Initialize(int width, int height)
     return false;
   }
 
-
-   SLOPE = 0.1;
-  dynamicsWorld->setGravity(btVector3(0.0,-2.0,0));//-1.0 * SLOPE));
+  dynamicsWorld->setGravity(btVector3(0.0,-2.0,0));
 
   //Set kinematic/static rigidbodies and add rigidbodies to dynamicWorld
 
@@ -269,49 +271,32 @@ void Graphics::Update(unsigned int dt, float movement[])
   board->Update( dt, movement, false);
 
   // if player drops off of map, set back to position
-  if( player->rigidBody->getCenterOfMassPosition().y() < -100.f ){
-    btTransform pos = player->rigidBody->getCenterOfMassTransform();
-    pos.setOrigin( btVector3(0.0,12.0,0.0) );
-    player->rigidBody->setCenterOfMassTransform(pos);
-    player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
-   }
+     if( player->rigidBody->getCenterOfMassPosition().y() < -100.f ){
+       btTransform pos = player->rigidBody->getCenterOfMassTransform();
+       pos.setOrigin( btVector3(0.0,12.0,0.0) );
+       player->rigidBody->setCenterOfMassTransform(pos);
+       player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+      }
 
-  // player update
-  player->Update( dt, movement, false);
-  m_camera->center.x = player->rigidBody->getCenterOfMassPosition().getX();
-  m_camera->center.y = player->rigidBody->getCenterOfMassPosition().getY() + 3.0;
-  m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
-  m_camera->updateView();
+  // player and camera update
+     player->Update( dt, movement, false);
+     m_camera->center.x = player->rigidBody->getCenterOfMassPosition().getX();
+     m_camera->center.y = player->rigidBody->getCenterOfMassPosition().getY() + 3.0;
+     m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
+     m_camera->updateView();
 
-  //spotlight over player
-  glm::mat4 pMat = player->GetModel();
-  glm::vec4 illumPlayer = glm::vec4(pMat[3]);
-
+<<<<<<< HEAD
 //  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
   lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
+=======
+  //spotlight over player
+     glm::mat4 pMat = player->GetModel();
+     glm::vec4 illumPlayer = glm::vec4(pMat[3]);
+     lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
+>>>>>>> dbfaaf763b6371c83677b9bf657b6fdc1ea0002d
    
-  int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
-  for( int i = 0; i < numManifolds; ++i ){
-    btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
 
-
-    const btCollisionObject *obA = contactManifold->getBody0();
-    const btTransform transA = obA->getWorldTransform();
-    const btVector3 originA = transA.getOrigin();
-
-    const btCollisionObject *obB = contactManifold->getBody1();
-    const btTransform transB = obB->getWorldTransform();
-    const btVector3 originB = transB.getOrigin();
-
-    // check if any collision for bumper one detected
-    if( originA == player->rigidBody->getCenterOfMassPosition() ||
-        originB == player->rigidBody->getCenterOfMassPosition() )
-    {
-      playerOnGround = true;
-    } 
-
-  }
-
+<<<<<<< HEAD
   // enemy update
   glm::vec3 playerPos = glm::vec3(
                            player->rigidBody->getCenterOfMassPosition().getX(),
@@ -360,6 +345,53 @@ void Graphics::Update(unsigned int dt, float movement[])
         }
       }
    }
+=======
+   //record time since last jump
+      playerOnGround += float(dt)/1000.f;
+
+   //if player completes level, progress to next
+      glm::vec4 playerPos = lightPosB;
+      playerPos.y += 10.0;
+      float dist = (playerPos.x - lightPosC.x) * (playerPos.x - lightPosC.x) +
+                   (playerPos.z - lightPosC.z) * (playerPos.z - lightPosC.z) +
+                   (playerPos.y - lightPosC.y) * (playerPos.y - lightPosC.y);
+      dist = sqrt( dist );
+      printf("%f vs. %f, %f vs. %f, %f vs. %f\n",playerPos.x,lightPosC.x, playerPos.y,lightPosC.y, playerPos.z,lightPosC.z);
+      if( dist < 10.0){
+         if(levelNumber < 3){
+            printf("congratulations, moving on to next level\n");
+            levelNumber++;
+            //removing level from scene and creating next
+               dynamicsWorld->removeRigidBody(board->rigidBody);
+               delete board;
+               std::string path = "../objects/level";
+               path += ('0'+levelNumber);
+               path +=".obj";
+               board =    new Object(0.0,-1.0,0.0, //position
+                      0.0,(2.0 * 3.141592) / 2.0,0.0 , //rotation
+                     0.0, 0,path.c_str() );   //mass,meshtype,objfile
+
+               dynamicsWorld->addRigidBody(board->rigidBody,COL_WALL,COL_BALL);
+               board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
+                                                     btCollisionObject::CF_KINEMATIC_OBJECT);
+               board->rigidBody->setActivationState(DISABLE_DEACTIVATION);
+            //replacing ball at start
+                btTransform pos = player->rigidBody->getCenterOfMassTransform();
+                pos.setOrigin( btVector3(0.0,12.0,0.0) );
+                player->rigidBody->setCenterOfMassTransform(pos);
+                player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
+            //changing goal point
+               lightPosC = glm::vec4(lvEnd[levelNumber-1],1.0);
+               
+         }
+
+         else{
+            printf("congratulations, you have beat all the levels!\n" );
+            
+         }
+      }
+      
+>>>>>>> dbfaaf763b6371c83677b9bf657b6fdc1ea0002d
 }
 
 void Graphics::Render()
@@ -611,18 +643,20 @@ void Graphics::movePlayer(int direction){
 
     //jump
     case 4:
-      if(playerOnGround){
+      if(playerOnGround >= 3.0){
          player->rigidBody->applyCentralForce( btVector3(0,100.0,0.0) );
-         playerOnGround = false;
+         jumps++;
+         if(jumps >= 2){
+            playerOnGround = 0;
+            jumps = 0;
+         }
       }
       break;
 
     //halt ball
     case 5:
-      if(playerOnGround){
          player->rigidBody->setLinearVelocity( btVector3(0,0,0) );       
-      }
-
+         break;
 
   }
   return;

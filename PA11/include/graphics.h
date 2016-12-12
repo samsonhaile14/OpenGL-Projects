@@ -67,6 +67,8 @@ class Graphics
     Object ***enemyBullets;
     bool *isBulletUsed;
 
+    glm::vec3 lvEnd[3];
+
     glm::vec4 lightPos;
     glm::vec4 lightPosB;
     glm::vec4 lightPosC;
@@ -86,13 +88,15 @@ class Graphics
 
     float SLOPE;
 
-    bool playerOnGround = true;
+    float playerOnGround = 3.0;
+    int jumps = 0;
 
     int numEnemies = 1;
     int numBulletsPerEnemy = 1;
     int score;
     int lives;
     bool isGameOver;
+    int levelNumber = 3;
 };
 
 #endif /* GRAPHICS_H */
