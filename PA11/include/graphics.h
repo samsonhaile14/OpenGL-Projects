@@ -27,6 +27,7 @@ class Graphics
     void resetGame();
 
     void movePlayer(int direction);
+    void facePlayer(Object* enemy, glm::vec3 playerPos);
 
   private:
     std::string ErrorString(GLenum error);
@@ -59,6 +60,7 @@ class Graphics
 
     Object *board;
     Object *player;
+    Object **enemies;
 
     glm::vec4 lightPos;
     glm::vec4 lightPosB;
@@ -75,13 +77,13 @@ class Graphics
     btSequentialImpulseConstraintSolver *solver;
     btDiscreteDynamicsWorld *dynamicsWorld;
     
-
     bool clockwise = true;
 
     float SLOPE;
 
     bool playerOnGround = true;
 
+    int numEnemies = 1;
     int score;
     int lives;
     bool isGameOver;

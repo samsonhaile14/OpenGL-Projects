@@ -16,15 +16,10 @@ g_dimness = dimness;
 g_ambDimness = ambDimness;
 g_specDimness = 1.0;
 g_cutoffAngle = 0.65;
-g_spotlightIntensity = 2.0;
+g_spotlightIntensity = 1.0;
 score = 0;
 lives = 4;
 isGameOver = false;
-
-glm::vec3 lvOneEnd = glm::vec3( -557.6586,25.0000,297.7418 );
-
-
-lightPosC = glm::vec4(lvOneEnd,1.0);
 
 }
 
@@ -119,7 +114,8 @@ bool Graphics::Initialize(int width, int height)
 
    board = new Object(0.0,-1.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 2.0,0.0 , //rotation
-                     0.0, 0,"../objects/level1.obj");   //mass,meshtype,objfile
+                     0.0, 0,"../objects/OpenPlatform.obj");   //mass,meshtype,objfile
+
    player = new Object(0.0,12.0,0.0, //position
                       0.0,(2.0 * 3.141592) / 4.0,0.0 , //rotation
                      1.0, 1,"../objects/sphere.obj");   //mass,meshtype,objfile
@@ -171,14 +167,10 @@ bool Graphics::Initialize(int width, int height)
   int ballCollide = COL_WALL;
 
   dynamicsWorld->addRigidBody(board->rigidBody,COL_WALL,COL_BALL);
-<<<<<<< HEAD
-  dynamicsWorld->addRigidBody(player->rigidBody,COL_BALL,ballCollide);
-=======
   dynamicsWorld->addRigidBody(player->rigidBody,COL_BALL,COL_WALL);
   for( int i = 0; i < numEnemies; ++i ){
     dynamicsWorld->addRigidBody(enemies[i]->rigidBody,COL_BALL,COL_WALL);
   }
->>>>>>> Enemies
 
   board->rigidBody->setCollisionFlags(board->rigidBody->getCollisionFlags() | 
                                       btCollisionObject::CF_KINEMATIC_OBJECT);
@@ -208,7 +200,7 @@ bool Graphics::Initialize(int width, int height)
   }
 
   //set light position
-   lightPos = glm::vec4( 0.0,50.0,0.0,1.0 );
+   lightPos = glm::vec4( 0.0,5.0,0.0,1.0 );
 
   //enable depth testing
   glEnable(GL_DEPTH_TEST);
@@ -225,14 +217,6 @@ void Graphics::Update(unsigned int dt, float movement[])
   // board update
   board->Update( dt, movement, false);
 
-  // if player drops off of map, set back to position
-  if( player->rigidBody->getCenterOfMassPosition().y() < -100.f ){
-    btTransform pos = player->rigidBody->getCenterOfMassTransform();
-    pos.setOrigin( btVector3(0.0,12.0,0.0) );
-    player->rigidBody->setCenterOfMassTransform(pos);
-    player->rigidBody->setLinearVelocity(btVector3(0.0,0.0,0.0));
-   }
-
   // player update
   player->Update( dt, movement, false);
   m_camera->center.x = player->rigidBody->getCenterOfMassPosition().getX();
@@ -240,13 +224,6 @@ void Graphics::Update(unsigned int dt, float movement[])
   m_camera->center.z = player->rigidBody->getCenterOfMassPosition().getZ();
   m_camera->updateView();
 
-  //spotlight over player
-  glm::mat4 pMat = player->GetModel();
-  glm::vec4 illumPlayer = glm::vec4(pMat[3]);
-
-  printf( "%f %f %f\n", -illumPlayer.x,-illumPlayer.y,-illumPlayer.z);
-  lightPosB = glm::vec4(-illumPlayer.x,illumPlayer.y + 10.0,-illumPlayer.z,1.0);
-   
   int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
   for( int i = 0; i < numManifolds; ++i ){
     btPersistentManifold *contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
@@ -488,6 +465,8 @@ void Graphics::movePlayer(int direction){
 
     // up
     case 0:
+
+      printf("Moving UP...\r\n");
       force = (m_camera->dir);
       force.x *= multiplier/m_camera->r;
       force.y = 0;
@@ -497,6 +476,8 @@ void Graphics::movePlayer(int direction){
 
     // down
     case 1:
+
+      printf("Moving DOWN...\r\n");
       force = (m_camera->dir);
       force.x *= -multiplier/m_camera->r;
       force.y = 0;
@@ -506,6 +487,8 @@ void Graphics::movePlayer(int direction){
 
     // left
     case 2:
+
+      printf("Moving LEFT...\r\n");
       force = (m_camera->horAxis);
       force.x *= multiplier/m_camera->r;
       force.y = 0;
@@ -515,6 +498,8 @@ void Graphics::movePlayer(int direction){
 
     // right
     case 3:
+
+      printf("Moving RIGHT...\r\n");
       force = (m_camera->horAxis);
       force.x *= -multiplier/m_camera->r;
       force.y = 0;
@@ -522,20 +507,13 @@ void Graphics::movePlayer(int direction){
       player->rigidBody->applyCentralForce( btVector3(force.x,force.y,force.z) );
       break;
 
-    //jump
     case 4:
       if(playerOnGround){
+         printf("Jumping...\r\n");
          player->rigidBody->applyCentralForce( btVector3(0,100.0,0.0) );
          playerOnGround = false;
       }
       break;
-
-    //halt ball
-    case 5:
-      if(playerOnGround){
-         player->rigidBody->setLinearVelocity( btVector3(0,0,0) );       
-      }
-
 
   }
   return;
