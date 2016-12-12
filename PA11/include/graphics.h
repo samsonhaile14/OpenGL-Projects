@@ -28,7 +28,7 @@ class Graphics
 
     void movePlayer(int direction);
     void facePlayer(int enemyID, glm::vec3 playerPos);
-    void setBulletMotion(int enemyID);
+    void setBulletMotion(int enemyID, int bulletID);
     void resetBullet(Object *bullet, int bulletID);
 
   private:
@@ -66,6 +66,7 @@ class Graphics
     glm::vec3 *enemyDirection;
     Object ***enemyBullets;
     bool *isBulletUsed;
+    int *bulletTimeToLive;
 
     glm::vec3 lvEnd[3];
 
@@ -95,6 +96,7 @@ class Graphics
     int numBulletsPerEnemy = 1;
     int score;
     int lives;
+    int deathCount;
     bool isGameOver;
     int levelNumber = 3;
 };
